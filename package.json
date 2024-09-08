@@ -1,0 +1,36 @@
+{
+  "name": "whalar-got",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "build:watch": "tsc --watch",
+    "start": "node build/index.js",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^22.5.4",
+    "eslint": "^9.10.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@fastify/elasticsearch": "^3.1.0",
+    "@sinclair/typebox": "^0.33.9",
+    "fastify": "^4.28.1",
+    "fastify-amqp": "^1.1.0",
+    "fastify-knex": "^0.1.1",
+    "fastify-plugin": "^4.5.1",
+    "knex": "^3.1.0",
+    "knex-types": "^0.5.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.11.0",
+    "ts-node": "^10.9.2"
+  }
+}

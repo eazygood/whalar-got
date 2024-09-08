@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  mysql:
+    container_name: whaler-got-mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQ_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend-network
+  backend-app:
+    container_name: whaler-got-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 5500:5500
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - api:/usr/src/app/
+    networks:
+      - backend-network
+volumes:
+  api:
+  mysql_data:
+networks:
+  backend-network:
+    driver: bridge

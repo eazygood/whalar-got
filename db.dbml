@@ -1,0 +1,77 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table characters {
+  id integer
+  name varchar(100)
+  nickname varchar(100)
+  royal boolean
+  kingsguard boolean
+  link text
+  image_full text
+  image_thumb text
+}
+
+Table actors {
+  id integer
+  character_id int
+  name varchar(100)
+  link text
+}
+
+Table seasons {
+  id integer
+  actor_id integer
+  count integer
+}
+
+Table houses {
+  id integer
+  character_id integer
+  name varchar(100)
+}
+
+Table allies {
+  id integer
+  character_id integer
+  ally_to integer
+}
+
+Table actions {
+  id integer
+  character_id integer
+  action_to integer
+  type action_type
+}
+
+Table relationships {
+  id integer
+  characted_id interger
+  relation_to integer
+  type enum
+}
+
+
+Enum action_type {
+  "KILLED"
+  "SERVED"
+  "GUARDED"
+  "ABDUCTED"
+}
+
+Enum relationship_type {
+  "PARENT"
+  "SIBLING"
+  "MARRIED_ENGAGED"
+}
+
+Ref: characters.id < actors.character_id 
+Ref: characters.id < houses.character_id
+Ref: characters.id < allies.character_id
+Ref: characters.id < relationships.characted_id
+Ref: relationships.relation_to > characters.id 
+Ref: characters.id < actions.character_id
+Ref: actions.action_to > characters.id
+
+Ref: actors.id < seasons_active.actor_id
+
