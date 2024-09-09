@@ -1,29 +1,8 @@
 version: "3.7"
 
 services:
-  mysql:
-    container_name: whaler-got-mysql
-    image: mysql:latest
-    restart: always
-    environment:
-      MYSQ_HOST: mysql
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - backend-network
   backend-app:
-    container_name: whaler-got-backend
+    container_name: whalar-got-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -34,18 +13,91 @@ services:
       MYSQL_DATABASE: db
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: rabbitmq
+      RABBITMQ_PASSWORD: rabbitmq
+      ELASTICSEARCH_URI: elasticsearch:9200
     ports:
       - 5500:5500
     depends_on:
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     volumes:
       - api:/usr/src/app/
     networks:
       - backend-network
+
+  mysql:
+    container_name: whalar-got-mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQ_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  
+  rabbitmq:
+    container_name: whalar-got-rabbitmq
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  elasticsearch:
+    container_name: whalar-got-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 volumes:
   api:
   mysql_data:
+  rabbitmq_data:
+  rabbitmq_log:
+  elasticsearch_data:
 networks:
   backend-network:
     driver: bridge
