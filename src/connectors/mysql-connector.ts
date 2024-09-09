@@ -33,17 +33,15 @@ export async function registerMysqlDatabase(
 export async function buildAndRun<T>({
   app,
   callback,
-  transaction = false,
+  transaction,
 }: {
   app: FastifyInstance;
   callback: (connection: Knex) => Promise<T>;
-  transaction?: boolean;
+  transaction?: Knex.Transaction;
 }): Promise<T> {
-  if (!transaction) {
-    return await callback(app.knex);
-  }
+  const conenction = transaction || app.knex;
 
-  return await withinTransaction<T>({ app, callback });
+  return await callback(conenction);
 }
 
 export async function withinTransaction<T>({

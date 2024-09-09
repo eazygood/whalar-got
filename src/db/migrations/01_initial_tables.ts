@@ -50,9 +50,9 @@ async function createActorsTable(knex: Knex): Promise<void> {
     table.text("link");
     table
       .foreign("character_id")
-      .references('id')
+      .references("id")
       .inTable(CHARACTERS_TABLE)
-      .onDelete("CASCADE")
+      .onDelete("CASCADE");
   });
 }
 
@@ -111,8 +111,18 @@ async function createActionsTable(knex: Knex): Promise<void> {
     table.increments("id").primary();
     table.integer("character_id").unsigned();
     table.integer("action_to").unsigned();
+    // table.string("type", 100);
     table
-      .enu("type", ["killed", "served", "guarded", "abducted"])
+      .enum("type", [
+        "killed",
+        "killedBy",
+        "serves",
+        "servedBy",
+        "guardedBy",
+        "guardianOf",
+        "abducted",
+        "abductedBy",
+      ])
       .notNullable();
 
     // Foreign key for character_id and action_to referencing characters(id)
@@ -135,7 +145,7 @@ async function createRelationshipsTable(knex: Knex): Promise<void> {
     table.increments("id").primary();
     table.integer("character_id").unsigned();
     table.integer("relation_to").unsigned();
-    table.enu("type", ["parent", "sibling", "married_engaged"]).notNullable();
+    table.enum("type", ["parent", "parentOf", "sibling", "married_engaged"]).notNullable();
 
     // Foreign key for character_id and relation_to referencing characters(id)
     table
