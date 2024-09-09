@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import data from './got-characters.json'
+import data from './got-characters.json';
 
 function getUniqueKeys(data: any) {
-    return new Set(data.flatMap((d:any) => Object.keys(d)));
+	return new Set(data.flatMap((d: any) => Object.keys(d)));
 }
 
-console.log(getUniqueKeys(data.characters))
+console.log(getUniqueKeys(data.characters));

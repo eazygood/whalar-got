@@ -1,1 +1,1 @@
-export * from './characters-schema'
+export * from './characters-schema';

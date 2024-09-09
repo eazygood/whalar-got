@@ -1,12 +1,12 @@
-import { Static, Type } from "@sinclair/typebox";
-import { TypeObject, Nullable } from "../../../tools/typebox";
+import { Static, Type } from '@sinclair/typebox';
+import { TypeObject, Nullable } from '../../../tools/typebox';
 
 export type UpdateOneCharactersParam = Static<typeof UpdateOneCharactersParam>;
 export const UpdateOneCharactersParam = Type.Object({
-	character_id:Type.Number()
+	character_id: Type.Number(),
 });
 
-export type UpdateOneCharactersBody= Static<typeof UpdateOneCharactersBody>;
+export type UpdateOneCharactersBody = Static<typeof UpdateOneCharactersBody>;
 export const UpdateOneCharactersBody = TypeObject({
 	name: Type.String(),
 	nickname: Nullable(Type.String()),
@@ -15,9 +15,9 @@ export const UpdateOneCharactersBody = TypeObject({
 	link: Nullable(Type.String()),
 	image_full: Nullable(Type.String()),
 	image_thumb: Nullable(Type.String()),
-})
+});
 
-export type UpdateOneCharactersReply= Static<typeof UpdateOneCharactersReply>;
+export type UpdateOneCharactersReply = Static<typeof UpdateOneCharactersReply>;
 export const UpdateOneCharactersReply = TypeObject({
-	status: Type.String(),  
+	status: Type.String(),
 });

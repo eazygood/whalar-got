@@ -8,7 +8,12 @@
     "build:watch": "tsc --watch",
     "start": "node build/index.js",
     "test": "jest --forceExit",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:unit": "jest -- test/unit",
+    "coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint-staged": "lint-staged",
+    "format": "prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +21,13 @@
   "devDependencies": {
     "@types/lodash": "^4.17.7",
     "@types/node": "^22.5.4",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
     "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jest": "^28.8.3",
+    "lint-staged": "^15.2.10",
+    "prettier": "3.3.3",
     "ts-jest": "^29.2.5",
     "typescript": "^5.5.4"
   },
@@ -32,5 +43,17 @@
     "lodash": "^4.17.21",
     "mysql2": "^3.11.0",
     "ts-node": "^10.9.2"
-  }
+  },
+  "lint-staged": {
+    "*.{ts,js,json,md,yml}": [
+      "prettier --write"
+    ],
+    "*.{ts,js}": [
+      "eslint --fix"
+    ]
+  },
+  "pre-commit": [
+    "lint-staged",
+    "build:test"
+  ]
 }

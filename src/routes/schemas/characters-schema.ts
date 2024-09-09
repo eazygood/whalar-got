@@ -1,13 +1,12 @@
-import { Static, Type } from "@sinclair/typebox";
-import { Nullable, TypeObject } from "../../tools/typebox";
-import { CharacterSchema } from "../../entities/character";
-import { ActorSchema } from "../../entities/actor";
+import { Static, Type } from '@sinclair/typebox';
+import { Nullable, TypeObject } from '../../tools/typebox';
+import { CharacterSchema } from '../../entities/character';
+import { ActorSchema } from '../../entities/actor';
 
 export type FindManyCharactersReply = Static<typeof FindManyCharactersReply>;
 export const FindManyCharactersReply = TypeObject({
 	data: Type.Array(CharacterSchema),
 });
-
 
 export type SearchCharactersQuerystring = Static<typeof SearchCharactersQuerystring>;
 export const SearchCharactersQuerystring = Type.Object({
@@ -15,7 +14,7 @@ export const SearchCharactersQuerystring = Type.Object({
 	nickname: Type.Optional(Nullable(Type.String())),
 	royal: Type.Optional(Type.Boolean()),
 	kingsguard: Type.Optional(Type.Boolean()),
-})
+});
 
 export type SearchActorQuerystring = Static<typeof SearchActorQuerystring>;
 export const SearchActorQuerystring = Type.Object({
@@ -51,7 +50,6 @@ export const SearchActionsQuerystring = Type.Object({
 	killedBy: Type.Optional(Type.String()),
 });
 
-
 export type SearchQuerystring = Static<typeof SearchQuerystring>;
 export const SearchQuerystring = Type.Intersect([
 	SearchCharactersQuerystring,
@@ -60,13 +58,14 @@ export const SearchQuerystring = Type.Intersect([
 	SearchAllyQuerystring,
 	SearchRelationshipsQuerystring,
 	SearchActionsQuerystring,
-])
-
+]);
 
 export type SearchCharactersReply = Static<typeof SearchCharactersReply>;
 export const SearchCharactersReply = TypeObject({
-	data: Type.Array(Type.Intersect([
-		CharacterSchema,
-		// ActorSchema,
-	]))
-})
+	data: Type.Array(
+		Type.Intersect([
+			CharacterSchema,
+			// ActorSchema,
+		]),
+	),
+});
