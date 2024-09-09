@@ -1,0 +1,8 @@
+{
+  "root": true,
+  "extends": ["prettier"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "new-cap": "off"
+  }
+}
