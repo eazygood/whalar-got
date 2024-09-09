@@ -1,10 +1,9 @@
 export function getConfig() {
     return {
-        protocol: 'amqp',
-        hostname: 'localhost',
-        port: 5672,
-        username: process.env.RABBITMQ_USERNAME || 'guest',
-        password: process.env.RABBITMQ_PASSWORD || 'guest',
+        hostname: process.env.RABBITMQ_HOST || 'localhost',
+        port: Number(process.env.RABBITMQ_PORT) || 5672,
+        username: process.env.RABBITMQ_USERNAME || 'rabbitmq',
+        password: process.env.RABBITMQ_PASSWORD || 'rabbitmq',
         vhost: ''
       };
   }

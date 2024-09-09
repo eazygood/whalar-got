@@ -117,15 +117,20 @@ type RelationshipsDb = {
 
 enum RelationTypes {
     parent = 'parent',
+    parentOf = 'parentOf',
     sibling = 'sibling',
     marriedEngaged = 'married_engaged',
 }
 
 enum ActionTypes {
     killed = 'killed',
-    served = 'served',
-    guarded = 'guarded',
-    abducted = 'abducted'
+    killedBy = 'killedBy',
+    serves = 'serves',
+    servedBy = 'servedBy',
+    guardedBy = 'guardedBy',
+    guardianOf = 'guardianOf',
+    abducted = 'abducted',
+    abductedBy = 'abductedBy'
 }
 
 function getCharacterDbEntity(id: number, character: Characters): CharactersDb {
@@ -220,7 +225,7 @@ function prepareDataForDb(data: Characters[]): any {
 
         // relationships
         character.parentOf?.forEach(relation => {
-            const relationshipsDb = getRelationships(relationshipId, characterId, relation, RelationTypes.parent);
+            const relationshipsDb = getRelationships(relationshipId, characterId, relation, RelationTypes.parentOf);
             relationships.push(relationshipsDb);
             relationshipId += 1;
         });
@@ -251,37 +256,43 @@ function prepareDataForDb(data: Characters[]): any {
         });
         
         character.killedBy?.forEach(c => {
-            const actionDb = getAction(actionId, characterId, c, ActionTypes.killed);
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.killedBy);
             actions.push(actionDb)
             actionId += 1;
         });
 
         character.serves?.forEach(c => {
-            const actionDb = getAction(actionId, characterId, c, ActionTypes.served);
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.serves);
             actions.push(actionDb)
             actionId += 1;
         });
 
         character.servedBy?.forEach(c => {
-            const actionDb = getAction(actionId, characterId, c, ActionTypes.served);
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.servedBy);
             actions.push(actionDb)
             actionId += 1;
         });
 
         character.guardianOf?.forEach(c => {
-            const actionDb = getAction(actionId, characterId, c, ActionTypes.guarded);
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.guardianOf);
             actions.push(actionDb)
             actionId += 1;
         });
 
         character.guardedBy?.forEach(c => {
-            const actionDb = getAction(actionId, characterId, c, ActionTypes.guarded);
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.guardedBy);
             actions.push(actionDb)
             actionId += 1;
         });
         
         character.abducted?.forEach(c => {
             const actionDb = getAction(actionId, characterId, c, ActionTypes.abducted);
+            actions.push(actionDb)
+            actionId += 1;
+        });
+
+        character.abductedBy?.forEach(c => {
+            const actionDb = getAction(actionId, characterId, c, ActionTypes.abductedBy);
             actions.push(actionDb)
             actionId += 1;
         });
