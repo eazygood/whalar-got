@@ -1,8 +1,7 @@
 import { Route } from '../schemas/route';
 import _ from 'lodash';
-import * as publicApiSchemas from '../schemas';
 import * as characterManager from '../../managers/character-manager';
-import * as characterSchemas from '../schemas/characters-schemas';
+import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
 
 export const createCharacter: Route<{
@@ -39,9 +38,8 @@ export const getCharacterById: Route<{
 	method: 'GET',
 	url: '/:character_id',
 	schema: {
-		querystring: publicApiSchemas.SearchQuerystring,
 		response: {
-			200: publicApiSchemas.SearchCharactersReply,
+			200: characterSchemas.FindOneCharactersReply,
 		},
 	},
 	async handler(request, reply) {

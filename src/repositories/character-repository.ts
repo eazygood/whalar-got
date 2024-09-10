@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as db from '../connectors/mysql-connector';
 import { Character, CharacterToAdd } from '../entities/character';
 import { CHARACTERS_TABLE } from '../db/constants';
-import { SearchCharactersQuerystring } from '../routes/schemas';
+import { characterSchemas } from '../routes/schemas';
 import { Knex } from 'knex';
 
 export async function findOne({ app, id }: { app: FastifyInstance; id: number }) {
@@ -20,7 +20,7 @@ export async function findMany({
 	searchQuery,
 }: {
 	app: FastifyInstance;
-	searchQuery?: SearchCharactersQuerystring;
+	searchQuery?: characterSchemas.SearchCharactersQuerystring;
 }) {
 	const conn = app.knex;
 	return await db.buildAndRun<Character[]>({

@@ -1,12 +1,12 @@
 import { FastifyInstance } from 'fastify';
-import * as characterRepository from '../repositories/characters';
-import { SearchCharactersQuerystring } from '../routes/schemas';
+import * as characterRepository from '../repositories/character-repository';
+import { characterSchemas } from '../routes/schemas';
 import { Character, CharacterToAdd } from '../entities/character';
 import { Knex } from 'knex';
 import {
 	CreateOneCharactersBody,
 	UpdateOneCharactersBody,
-} from '../routes/schemas/characters-schemas';
+} from '../routes/schemas/character-schemas';
 
 export async function findOne({ app, characterId }: { app: FastifyInstance; characterId: number }) {
 	return await characterRepository.findOne({ app, id: characterId });
@@ -64,7 +64,7 @@ export async function search({
 	searchQuery,
 }: {
 	app: FastifyInstance;
-	searchQuery: SearchCharactersQuerystring;
+	searchQuery: characterSchemas.SearchCharactersQuerystring;
 }) {
 	return await characterRepository.findMany({ app, searchQuery });
 }
