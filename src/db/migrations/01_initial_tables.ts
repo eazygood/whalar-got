@@ -39,6 +39,8 @@ async function createCharactersTable(knex: Knex): Promise<void> {
 		table.text('link');
 		table.text('image_full');
 		table.text('image_thumb');
+		table.charset('utf8mb4');
+    	table.collate('utf8mb4_unicode_ci');
 	});
 }
 
@@ -53,6 +55,8 @@ async function createActorsTable(knex: Knex): Promise<void> {
 			.references('id')
 			.inTable(CHARACTERS_TABLE)
 			.onDelete('CASCADE');
+		table.charset('utf8mb4');
+    	table.collate('utf8mb4_unicode_ci');
 	});
 }
 
@@ -61,7 +65,6 @@ async function createSeasonsTable(knex: Knex): Promise<void> {
 		table.increments('id').primary();
 		table.integer('actor_id').unsigned();
 		table.integer('count');
-
 		table.foreign('actor_id').references('id').inTable(ACTORS_TABLE).onDelete('CASCADE');
 	});
 }
@@ -71,13 +74,13 @@ async function createHousesTable(knex: Knex): Promise<void> {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();
 		table.string('name', 100).notNullable();
-
-		// Foreign key for character_id referencing characters(id)
 		table
 			.foreign('character_id')
 			.references('id')
 			.inTable(CHARACTERS_TABLE)
 			.onDelete('CASCADE');
+		table.charset('utf8mb4');
+		table.collate('utf8mb4_unicode_ci');
 	});
 }
 
@@ -119,7 +122,6 @@ async function createActionsTable(knex: Knex): Promise<void> {
 
 		// Foreign key for character_id and action_to referencing characters(id)
 		table.foreign('character_id').references('id').inTable('characters').onDelete('CASCADE');
-
 		table.foreign('action_to').references('id').inTable('characters').onDelete('CASCADE');
 	});
 }

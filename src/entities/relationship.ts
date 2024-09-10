@@ -1,8 +1,9 @@
 import { Type, Static } from '@sinclair/typebox';
 import { Nullable } from '../tools/typebox';
 
-enum RelationTypes {
+export enum RelationTypes {
 	parent = 'parent',
+	parentOf = 'parentOf',
 	sibling = 'sibling',
 	marriedEngaged = 'married_engaged',
 }

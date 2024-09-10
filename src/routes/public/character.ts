@@ -3,6 +3,8 @@ import _ from 'lodash';
 import * as characterManager from '../../managers/character-manager';
 import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
+import { characterSearchSchemas } from '../schemas';
+import { characterDetailsMediator } from '../../mediators';
 
 export const createCharacter: Route<{
 	Reply: characterSchemas.CreateOneCharactersReply;
@@ -108,5 +110,32 @@ export const deleteCharacter: Route<{
 		});
 
 		return reply.status(200).send({ id });
+	},
+};
+
+export const searchCharacter: Route<{
+	Reply: characterSearchSchemas.SearchCharactersReply;
+	Querystring: characterSearchSchemas.SearchItemsQueryString;
+}> = {
+	method: 'GET',
+	url: '/search',
+	schema: {
+		response: {
+			200: characterSearchSchemas.SearchCharactersReply,
+		},
+	},
+	async handler(request, reply) {
+		const data = await withinTransaction({
+			app: request.server,
+			callback: async (transaction) => {
+				return characterDetailsMediator.findMany({
+					app: request.server,
+					searchQuery: request.query,
+					transaction,
+				});
+			},
+		});
+
+		return reply.status(200).send({ data: 'ok' });
 	},
 };

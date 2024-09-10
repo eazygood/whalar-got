@@ -2,9 +2,9 @@ import { FastifyInstance } from "fastify";
 import { Knex } from "knex";
 import _ from "lodash";
 import * as db from '../connectors/mysql-connector';
-import { HOUSES_TABLE } from "../db/constants";
+import { SEASONS_TABLE } from "../db/constants";
 import { characterSearchSchemas } from "../routes/schemas";
-import { House } from "../entities/house";
+import { Season } from "../entities/season";
 
 export async function findMany({
 	app,
@@ -12,28 +12,24 @@ export async function findMany({
 	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery?: characterSearchSchemas.SearchHouseQuerystring;
+	searchQuery?: characterSearchSchemas.SearchSeasonQuerystring;
 	transaction?: Knex.Transaction;
 }) {
 	const conn = app.knex;
-	return await db.buildAndRun<House[]>({
+	return await db.buildAndRun<Season[]>({
 		app,
 		transaction,
 		callback: async (conn) => {
 			console.log('searchQuery: ', searchQuery);
 
 			if (_.isEmpty(searchQuery)) {
-				return conn.table(HOUSES_TABLE).select();
+				return conn.table(SEASONS_TABLE).select();
 			}
 
-			const query = conn.table(HOUSES_TABLE);
+			const query = conn.table(SEASONS_TABLE);
 
-			if (searchQuery.character_ids) {
-				query.whereIn('character_id', searchQuery.character_ids);
-			}
-
-			if (searchQuery.house_name) {
-				query.andWhereILike('name', `%${searchQuery.house_name}%`);
+			if (searchQuery.actor_ids) {
+				query.whereIn('actor_id', searchQuery.actor_ids);
 			}
 
 			return query.select();

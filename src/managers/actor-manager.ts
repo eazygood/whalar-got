@@ -4,7 +4,8 @@ import { actorRepository } from '../repositories';
 import { Actor } from '../entities/actor';
 import { characterManager } from '.';
 import { CreateOneCharacterActorBody } from '../routes/schemas/character-actor-schemas';
-import { ACTORS_TABLE } from '../db/constants';
+import { SearchActorQuerystring } from '../routes/schemas/character-search-schemas';
+import _ from 'lodash';
 
 export async function createOne({
 	app,
@@ -60,6 +61,22 @@ export async function findOne({
 	return await actorRepository.findOne({ app, actorId, characterId, transaction });
 }
 
+export async function findMany({
+	app,
+	searchQuery,
+	transaction,
+}: {
+	app: FastifyInstance;
+	searchQuery: SearchActorQuerystring
+	transaction?: Knex.Transaction;
+}) {
+	if (searchQuery && !searchQuery.actor_name && _.isEmpty(searchQuery.character_ids)) {
+		return [];
+	}
+	
+	return await actorRepository.findMany({ app, searchQuery, transaction });
+}
+
 export async function deleteOne({
 	app,
 	actorId,
@@ -73,4 +90,3 @@ export async function deleteOne({
 }) {
 	return await actorRepository.deleteOne({ app, actorId, characterId, transaction });
 }
-

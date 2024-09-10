@@ -10,5 +10,5 @@ export const FindOneCharactersActorReply = TypeObject({
 export type FindOneCharactersActorParam = Static<typeof FindOneCharactersActorParam>;
 export const FindOneCharactersActorParam = Type.Object({
 	character_id: Type.Number(),
-    actor_id: Type.Number(),
+	actor_id: Type.Number(),
 });

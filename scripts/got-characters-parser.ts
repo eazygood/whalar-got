@@ -347,19 +347,22 @@ function prepareDataForDb(data: Characters[]): any {
 			);
 			actors.push(actorDb);
 			actorId += 1;
+		} else {
+			character.actors?.forEach((a) => {
+				const actorDb = getActor(actorId, characterId, a.actorName, a.actorLink);
+				actors.push(actorDb);
+	
+				a.seasonsActive?.forEach((seasonsCount) => {
+					const seasonDb = getSeasons(seasonId, actorId, seasonsCount);
+					seasons.push(seasonDb);
+					seasonId += 1;
+				});
+
+				actorId += 1;
+			});
 		}
 
-		character.actors?.forEach((a) => {
-			const actorDb = getActor(actorId, characterId, a.actorName, a.actorLink);
-			actors.push(actorDb);
-			actorId += 1;
-
-			a.seasonsActive?.forEach((seasonsCount) => {
-				const seasonDb = getSeasons(seasonId, actorId, seasonsCount);
-				seasons.push(seasonDb);
-				seasonId += 1;
-			});
-		});
+		
 
 		// houses
 		if (typeof character.houseName === 'string') {
@@ -498,4 +501,4 @@ function saveDataToFileAsJSON(data: any, filePath: string) {
 
 // console.log(Object.entries(getCharacters(data.characters)).filter(c => c[1].length > 1));
 // saveDataToFile(prepareDbData(data.characters), path.join(__dirname, "./test.json"));
-// prepareDbStatements(data.characters);
+prepareDbStatements(data.characters);

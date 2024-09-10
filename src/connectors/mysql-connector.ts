@@ -64,7 +64,10 @@ export async function withinTransaction<T>({
 	} catch (err) {
 		await trx.rollback();
 
-		throw new Error('database commit failed');
+		console.log(err);
+		throw new Error('database commit failed', {
+			cause: err,
+		});
 	}
 }
 

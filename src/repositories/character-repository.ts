@@ -3,8 +3,8 @@ import _ from 'lodash';
 import * as db from '../connectors/mysql-connector';
 import { Character, CharacterToAdd } from '../entities/character';
 import { CHARACTERS_TABLE } from '../db/constants';
-import { characterSchemas } from '../routes/schemas';
 import { Knex } from 'knex';
+import { SearchCharactersQuerystring } from '../routes/schemas/character-search-schemas';
 
 export async function findOne({
 	app,
@@ -13,7 +13,7 @@ export async function findOne({
 }: {
 	app: FastifyInstance;
 	characterId: number;
-	transaction?: Knex.Transaction
+	transaction?: Knex.Transaction;
 }): Promise<Character | undefined> {
 	return await db.buildAndRun<Character | undefined>({
 		app,
@@ -27,40 +27,40 @@ export async function findOne({
 export async function findMany({
 	app,
 	searchQuery,
+	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery?: characterSchemas.SearchCharactersQuerystring;
+	searchQuery?: SearchCharactersQuerystring;
+	transaction?: Knex.Transaction;
 }) {
 	const conn = app.knex;
 	return await db.buildAndRun<Character[]>({
 		app,
+		transaction,
 		callback: async (conn) => {
 			console.log('searchQuery: ', searchQuery);
-			if (!searchQuery) {
+
+			if (_.isEmpty(searchQuery)) {
 				return conn.table(CHARACTERS_TABLE).select();
 			}
 
-			const query = conn.table(CHARACTERS_TABLE).select();
+			const query = conn.table(CHARACTERS_TABLE);
 
 			console.log('NAME', searchQuery.name);
 
+			if (searchQuery.character_ids) {
+				query.whereIn('id', searchQuery.character_ids);
+			}
+
 			if (searchQuery.name) {
-				query.andWhere({ name: searchQuery.name });
+				query.whereILike('name', `%${searchQuery.name}%`);
 			}
 
 			if (searchQuery.nickname) {
-				query.andWhere({ nickname: searchQuery.nickname });
+				query.orWhereILike('nickname', `%${searchQuery.name}%`);
 			}
 
-			if (searchQuery.kingsguard) {
-				query.andWhere({ kingsguard: searchQuery.kingsguard });
-			}
-
-			if (searchQuery.royal) {
-				query.andWhere({ royal: searchQuery.royal });
-			}
-
-			return query;
+			return query.select();
 		},
 	});
 }

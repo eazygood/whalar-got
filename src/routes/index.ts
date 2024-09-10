@@ -6,6 +6,7 @@ export default async function registerPublicRoutes(app: FastifyInstance) {
 	app.route(characters.createCharacter);
 	app.route(characters.updateCharacter);
 	app.route(characters.deleteCharacter);
+	app.route(characters.searchCharacter);
 
 	app.route(characters.createCharacterActor);
 	app.route(characters.getCharacterActor);

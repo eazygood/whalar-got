@@ -2,11 +2,15 @@ import { Type, Static } from '@sinclair/typebox';
 import { Nullable } from '../tools/typebox';
 import { type } from 'os';
 
-enum ActionTypes {
+export enum ActionTypes {
 	killed = 'killed',
-	served = 'served',
-	guarded = 'guarded',
+	killedBy = 'killedBy',
+	serves = 'serves',
+	servedBy = 'servedBy',
+	guardedBy = 'guardedBy',
+	guardianOf = 'guardianOf',
 	abducted = 'abducted',
+	abductedBy = 'abductedBy',
 }
 
 export const ActionSchema = Type.Object({
