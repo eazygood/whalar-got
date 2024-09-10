@@ -1,13 +1,76 @@
 import { FastifyInstance } from 'fastify';
-import * as actorRepository from '../repositories/actor-repository';
-import { SearchActorQuerystring, SearchCharactersQuerystring } from '../routes/schemas';
+import { Knex } from 'knex';
+import { actorRepository } from '../repositories';
+import { Actor } from '../entities/actor';
+import { characterManager } from '.';
+import { CreateOneCharacterActorBody } from '../routes/schemas/character-actor-schemas';
+import { ACTORS_TABLE } from '../db/constants';
 
-export async function search({
+export async function createOne({
 	app,
-	searchQuery,
+	characterId,
+	createData,
+	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery: SearchActorQuerystring;
-}) {
-	return await actorRepository.findMany({ app, searchQuery });
+	characterId: number;
+	createData: CreateOneCharacterActorBody;
+	transaction?: Knex.Transaction;
+}): Promise<Actor> {
+	if (!characterId) {
+		throw new Error('Actor: character id not provided');
+	}
+
+	const character = await characterManager.findOne({ app, characterId, transaction });
+
+	if (!character) {
+		throw new Error(`Actor: character not found by id: ${characterId}`);
+	}
+
+	const id = await actorRepository.createOne({
+		app,
+		data: { character_id: characterId, ...createData },
+		transaction,
+	});
+
+	if (!id) {
+		throw new Error('Actor: failed to insert new actor');
+	}
+
+	const actor = await actorRepository.findOne({ app, actorId: id, transaction });
+
+	if (!actor) {
+		throw new Error('Actor: failed to find created actor');
+	}
+
+	return actor;
 }
+
+export async function findOne({
+	app,
+	actorId,
+	characterId,
+	transaction,
+}: {
+	app: FastifyInstance;
+	actorId: number;
+	characterId: number;
+	transaction?: Knex.Transaction;
+}) {
+	return await actorRepository.findOne({ app, actorId, characterId, transaction });
+}
+
+export async function deleteOne({
+	app,
+	actorId,
+	characterId,
+	transaction,
+}: {
+	app: FastifyInstance;
+	actorId: number;
+	characterId: number;
+	transaction?: Knex.Transaction;
+}) {
+	return await actorRepository.deleteOne({ app, actorId, characterId, transaction });
+}
+

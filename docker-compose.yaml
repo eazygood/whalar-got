@@ -28,7 +28,9 @@ services:
       # elasticsearch:
       #   condition: service_healthy
     volumes:
-      - api:/usr/src/app/
+      - .:/app
+      - /app/node_modules
+    command: npm run start:watch
     networks:
       - backend-network
 
@@ -95,6 +97,7 @@ services:
 #     retries: 5
 volumes:
   api:
+  # ignore:
   mysql_data:
   # rabbitmq_data:
   # rabbitmq_log:

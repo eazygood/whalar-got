@@ -18,6 +18,7 @@ export async function registerMysqlDatabase(app: FastifyInstance): Promise<void>
 	await app.knex.raw('SELECT 1');
 
 	console.log('run seeds');
+
 	await app.knex.migrate.latest({
 		database: 'db',
 		directory: path.join(__dirname, '../db/migrations'),
@@ -37,9 +38,12 @@ export async function buildAndRun<T>({
 	callback: (connection: Knex) => Promise<T>;
 	transaction?: Knex.Transaction;
 }): Promise<T> {
-	const conenction = transaction || app.knex;
-
-	return await callback(conenction);
+	try {
+		const conenction = transaction || app.knex;
+		return await callback(conenction);
+	} catch (err) {
+		throw new Error('An error occurred while calling the database');
+	}
 }
 
 export async function withinTransaction<T>({

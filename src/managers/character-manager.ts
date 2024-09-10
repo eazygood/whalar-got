@@ -8,8 +8,8 @@ import {
 	UpdateOneCharactersBody,
 } from '../routes/schemas/character-schemas';
 
-export async function findOne({ app, characterId }: { app: FastifyInstance; characterId: number }) {
-	return await characterRepository.findOne({ app, id: characterId });
+export async function findOne({ app, characterId, transaction }: { app: FastifyInstance; characterId: number, transaction?: Knex.Transaction }) {
+	return await characterRepository.findOne({ app, characterId, transaction });
 }
 
 export async function findMany({ app }: { app: FastifyInstance }) {
@@ -24,8 +24,20 @@ export async function createOne({
 	app: FastifyInstance;
 	createData: CreateOneCharactersBody;
 	transaction?: Knex.Transaction;
-}) {
-	return await characterRepository.createOne({ app, data: createData, transaction });
+}):Promise<Character> {
+	const id =  await characterRepository.createOne({ app, data: createData, transaction });
+
+    if (!id) {
+        throw new Error('Character: failed to insert new character');
+    }
+
+    const character = await characterRepository.findOne({ app, characterId: id, transaction});
+
+	if (!character) {
+        throw new Error('Character: failed to find created character');
+    }
+
+	return character
 }
 
 export async function updateOne({

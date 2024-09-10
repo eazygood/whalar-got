@@ -1,35 +1,77 @@
 import { FastifyInstance } from 'fastify';
-import _ from 'lodash';
+import { Knex } from 'knex';
+import { ACTORS_TABLE, CHARACTERS_TABLE } from '../db/constants';
+import { Actor, ActorToAdd } from '../entities/actor';
 import * as db from '../connectors/mysql-connector';
-import { Character } from '../entities/character';
-import { CHARACTERS_TABLE } from '../db/constants';
-import { SearchActorQuerystring, SearchCharactersQuerystring } from '../routes/schemas';
-import { Actor } from '../entities/actor';
 
-export async function findMany({
+export async function createOne({
 	app,
-	searchQuery,
+	data,
+	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery?: SearchActorQuerystring;
+	data: ActorToAdd;
+	transaction?: Knex.Transaction;
 }) {
-	const conn = app.knex;
-	return await db.buildAndRun<Actor[]>({
+	return await db.buildAndRun<number>({
 		app,
+		transaction,
 		callback: async (conn) => {
-			if (_.isEmpty(searchQuery)) {
-				return [];
-			}
+			const [id] = await conn.table(ACTORS_TABLE).insert(data);
 
-			console.log('actor searchQuery: ', searchQuery);
+			return id;
+		},
+	});
+}
 
-			const query = conn.table(CHARACTERS_TABLE).select();
+export async function findOne({
+	app,
+	actorId,
+	characterId,
+	transaction,
+}: {
+	app: FastifyInstance;
+	actorId: number;
+	characterId?: number;
+	transaction?: Knex.Transaction;
+}): Promise<Actor | undefined> {
+	return await db.buildAndRun<Actor | undefined>({
+		app,
+		transaction,
+		callback: async (conn) => {
+			return conn
+				.table(ACTORS_TABLE)
+				.select()
+				.where({
+					id: actorId,
+					...(characterId ? { character_id: characterId } : null),
+				})
+				.first();
+		},
+	});
+}
 
-			if (searchQuery.actor_name) {
-				query.andWhere({ name: searchQuery.actor_name });
-			}
+export async function deleteOne({
+	app,
+	actorId,
+	characterId,
+	transaction,
+}: {
+	app: FastifyInstance;
+	actorId: number;
+	characterId?: number;
+	transaction?: Knex.Transaction;
+}): Promise<number> {
+	return await db.buildAndRun<number>({
+		app,
+		transaction,
+		callback: async (conn) => {
+			await conn.table(ACTORS_TABLE).delete().where({ 
+				id: actorId,
+				...(characterId ? { character_id: characterId } : null),
+			});
 
-			return query;
+			return actorId;
 		},
 	});
 }

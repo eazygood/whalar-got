@@ -1,18 +1,21 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache bash
+
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
+COPY package*.json .
 COPY tsconfig.json ./
 COPY src ./src
 COPY scripts ./scripts
 
 RUN npm install
-RUN npm run build
 
 COPY . .
 
-ENV PORT=5500
+RUN npm install -g ts-node-dev
 
-CMD [ "node","dist/src/index.js" ]
+EXPOSE 5500
+
+# CMD [ "node","dist/src/index.js" ]
+CMD ["npm", "run", "start:watch"]

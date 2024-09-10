@@ -1,14 +1,20 @@
 import { Static, Type } from '@sinclair/typebox';
 import { CharacterSchema } from '../../../entities/character';
-import { TypeObject } from '../../../tools/typebox';
+import { Nullable, TypeObject } from '../../../tools/typebox';
+import { ActorSchema } from '../../../entities/actor';
 
 export type CreateOneCharacterActorReply = Static<typeof CreateOneCharacterActorReply>;
 export const CreateOneCharacterActorReply = TypeObject({
-	data: CharacterSchema,
+	data: ActorSchema,
 });
 
 export type CreateOneCharacterActorParams = Static<typeof CreateOneCharacterActorParams>;
 export const CreateOneCharacterActorParams = Type.Object({
 	character_id: Type.Number(),
-	actor_id: Type.Number(),
+});
+
+export type CreateOneCharacterActorBody = Static<typeof CreateOneCharacterActorBody>;
+export const CreateOneCharacterActorBody = Type.Object({
+	name: Type.String(),
+	link: Nullable(Type.String()),
 });

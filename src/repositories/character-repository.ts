@@ -6,11 +6,20 @@ import { CHARACTERS_TABLE } from '../db/constants';
 import { characterSchemas } from '../routes/schemas';
 import { Knex } from 'knex';
 
-export async function findOne({ app, id }: { app: FastifyInstance; id: number }) {
-	return await db.buildAndRun<Character>({
+export async function findOne({
+	app,
+	characterId,
+	transaction,
+}: {
+	app: FastifyInstance;
+	characterId: number;
+	transaction?: Knex.Transaction
+}): Promise<Character | undefined> {
+	return await db.buildAndRun<Character | undefined>({
 		app,
+		transaction,
 		callback: async (conn) => {
-			return conn.table(CHARACTERS_TABLE).select<Character>().where({ id });
+			return conn.table(CHARACTERS_TABLE).select().where({ id: characterId }).first();
 		},
 	});
 }
@@ -28,7 +37,7 @@ export async function findMany({
 		callback: async (conn) => {
 			console.log('searchQuery: ', searchQuery);
 			if (!searchQuery) {
-				return conn.table(CHARACTERS_TABLE).select<Character[]>();
+				return conn.table(CHARACTERS_TABLE).select();
 			}
 
 			const query = conn.table(CHARACTERS_TABLE).select();
@@ -64,12 +73,14 @@ export async function createOne({
 	app: FastifyInstance;
 	data: CharacterToAdd;
 	transaction?: Knex.Transaction;
-}) {
-	return await db.buildAndRun<Character>({
+}): Promise<number> {
+	return await db.buildAndRun<number>({
 		app,
 		transaction,
 		callback: async (conn) => {
-			return conn.table(CHARACTERS_TABLE).insert<Character>(_.omit(data, 'id'));
+			const [id] = await conn.table(CHARACTERS_TABLE).insert(data);
+
+			return id;
 		},
 	});
 }
@@ -107,7 +118,7 @@ export async function deleteOne({
 		app,
 		transaction,
 		callback: async (conn) => {
-			await conn.table(CHARACTERS_TABLE).delete<Character>().where({ id });
+			await conn.table(CHARACTERS_TABLE).delete().where({ id });
 
 			return id;
 		},

@@ -31,7 +31,7 @@ export const createCharacter: Route<{
 	},
 };
 
-export const getCharacterById: Route<{
+export const getCharacter: Route<{
 	Reply: characterSchemas.FindOneCharactersReply;
 	Params: characterSchemas.FindOneCharactersParam;
 }> = {
@@ -43,16 +43,17 @@ export const getCharacterById: Route<{
 		},
 	},
 	async handler(request, reply) {
-		const character = await characterManager.findOne({
-			app: request.server,
-			characterId: request.params.character_id,
-		});
+		const character =
+			(await characterManager.findOne({
+				app: request.server,
+				characterId: Number(request.params.character_id),
+			})) ?? null;
 
 		return reply.status(200).send({ data: character });
 	},
 };
 
-export const updateCharacterById: Route<{
+export const updateCharacter: Route<{
 	Reply: characterSchemas.UpdateOneCharactersReply;
 	Params: characterSchemas.UpdateOneCharactersParam;
 	Body: characterSchemas.UpdateOneCharactersBody;
@@ -83,7 +84,7 @@ export const updateCharacterById: Route<{
 	},
 };
 
-export const deleteCharacterById: Route<{
+export const deleteCharacter: Route<{
 	Reply: characterSchemas.DeleteOneCharacterReply;
 	Params: characterSchemas.DeleteOneCharacterParam;
 }> = {
@@ -100,7 +101,7 @@ export const deleteCharacterById: Route<{
 			callback: async (transaction) => {
 				return characterManager.deleteOne({
 					app: request.server,
-					characterId: request.params.character_id,
+					characterId: Number(request.params.character_id),
 					transaction,
 				});
 			},
