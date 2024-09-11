@@ -1,10 +1,10 @@
-import { FastifyInstance } from "fastify";
-import { Knex } from "knex";
-import _ from "lodash";
+import { FastifyInstance } from 'fastify';
+import { Knex } from 'knex';
+import _ from 'lodash';
 import * as db from '../connectors/mysql-connector';
-import { HOUSES_TABLE } from "../db/constants";
-import { characterSearchSchemas } from "../routes/schemas";
-import { House } from "../entities/house";
+import { HOUSES_TABLE } from '../db/constants';
+import { characterSearchSchemas } from '../routes/schemas';
+import { House } from '../entities/house';
 
 export async function findMany({
 	app,

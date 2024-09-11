@@ -351,7 +351,7 @@ function prepareDataForDb(data: Characters[]): any {
 			character.actors?.forEach((a) => {
 				const actorDb = getActor(actorId, characterId, a.actorName, a.actorLink);
 				actors.push(actorDb);
-	
+
 				a.seasonsActive?.forEach((seasonsCount) => {
 					const seasonDb = getSeasons(seasonId, actorId, seasonsCount);
 					seasons.push(seasonDb);
@@ -361,8 +361,6 @@ function prepareDataForDb(data: Characters[]): any {
 				actorId += 1;
 			});
 		}
-
-		
 
 		// houses
 		if (typeof character.houseName === 'string') {

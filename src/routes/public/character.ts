@@ -136,6 +136,6 @@ export const searchCharacter: Route<{
 			},
 		});
 
-		return reply.status(200).send({ data: 'ok' });
+		return reply.status(200).send({ data });
 	},
 };

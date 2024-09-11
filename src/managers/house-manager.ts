@@ -1,6 +1,6 @@
-import { FastifyInstance } from "fastify";
-import { Knex } from "knex";
-import { houseRepository } from "../repositories";
+import { FastifyInstance } from 'fastify';
+import { Knex } from 'knex';
+import { houseRepository } from '../repositories';
 import { SearchActorQuerystring } from '../routes/schemas/character-search-schemas';
 
 export async function findMany({
@@ -9,7 +9,7 @@ export async function findMany({
 	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery: SearchActorQuerystring
+	searchQuery: SearchActorQuerystring;
 	transaction?: Knex.Transaction;
 }) {
 	return await houseRepository.findMany({ app, searchQuery, transaction });

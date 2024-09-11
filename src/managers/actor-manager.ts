@@ -67,13 +67,13 @@ export async function findMany({
 	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery: SearchActorQuerystring
+	searchQuery: SearchActorQuerystring;
 	transaction?: Knex.Transaction;
 }) {
 	if (searchQuery && !searchQuery.actor_name && _.isEmpty(searchQuery.character_ids)) {
 		return [];
 	}
-	
+
 	return await actorRepository.findMany({ app, searchQuery, transaction });
 }
 

@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import _ from 'lodash';
 import * as characterRepository from '../repositories/character-repository';
 // import { characterSchemas } from '../routes/schemas';
 import { Character } from '../entities/character';
@@ -8,6 +9,14 @@ import {
 	UpdateOneCharactersBody,
 } from '../routes/schemas/character-schemas';
 import { SearchCharactersQuerystring } from '../routes/schemas/character-search-schemas';
+import { Actor } from '../entities/actor';
+import { House } from '../entities/house';
+import {
+	ActionsExtended,
+	ActorWithSeason,
+	AlliesExtended,
+	RelationshipsExtended,
+} from '../mediators/character-details-mediator';
 
 export async function findOne({
 	app,
@@ -96,6 +105,108 @@ export async function search({
 	searchQuery: SearchCharactersQuerystring;
 }) {
 	return await characterRepository.findMany({ app, searchQuery });
+}
+
+export function mapCharacters({
+	characters,
+	actors,
+	houses,
+	actions,
+	relationships,
+	allies,
+}: {
+	characters: Character[];
+	actors: ActorWithSeason[];
+	houses: House[];
+	actions: ActionsExtended[];
+	relationships: RelationshipsExtended[];
+	allies: AlliesExtended[];
+}) {
+	return characters.map((character) => {
+		const characterId = character.id;
+		const houseMapped = mapHouses({ houses, characterId });
+		const actorsMapped = mapActors({ actors, characterId });
+		const relationshipsMapped = mapRelationShips({ relationships, characterId });
+		const actionsMapped = mapActions({ actions, characterId });
+		const alliesMapped = mapAllies({ allies, characterId });
+
+		return {
+			characterName: character.name,
+			...houseMapped,
+			...(character.nickname ? { nickname: character.nickname } : null),
+			...(character.image_thumb ? { characterImageThumb: character.image_thumb } : null),
+			...(character.image_full ? { characterImageFull: character.image_full } : null),
+			...(character.link ? { characterLink: character.link } : null),
+			...actorsMapped,
+			...relationshipsMapped,
+			...actionsMapped,
+			...alliesMapped,
+		};
+	});
+}
+
+function mapHouses({ houses, characterId }: { houses: House[]; characterId: number }) {
+	const filtered = houses
+		.filter((house) => house.character_id === characterId)
+		.map((house) => house.name);
+
+	if (filtered.length > 1) {
+		return { houseName: filtered };
+	}
+
+	return { houseName: filtered[0] };
+}
+
+function mapActors({ actors, characterId }: { actors: ActorWithSeason[]; characterId: number }) {
+	const extendedActors = actors
+		.filter((actor) => actor.character_id === characterId)
+		.map((actor) => ({
+			actorName: actor.name,
+			actorLink: actor.link,
+			seasonsActive: actor.season_active,
+		}));
+
+	if (_.isEmpty(extendedActors)) {
+		return null;
+	}
+
+	if (extendedActors.length > 1) {
+		return { actors: extendedActors };
+	}
+
+	return _.pick(extendedActors[0], ['actorName', 'actorLink']);
+}
+
+function mapRelationShips({
+	relationships,
+	characterId,
+}: {
+	relationships: RelationshipsExtended[];
+	characterId: number;
+}) {
+	return _.chain(relationships)
+		.filter({ character_id: characterId })
+		.groupBy('type')
+		.mapValues((items) => _.map(items, 'name'))
+		.value();
+}
+
+function mapActions({ actions, characterId }: { actions: ActionsExtended[]; characterId: number }) {
+	const a = _.chain(actions)
+		.filter({ character_id: characterId })
+		.groupBy('type')
+		.mapValues((items) => _.map(items, 'name'))
+		.value();
+
+	console.log(actions, characterId, a);
+	return a;
+}
+function mapAllies({ allies, characterId }: { allies: AlliesExtended[]; characterId: number }) {
+	return _.chain(allies)
+		.filter({ character_id: characterId })
+		.map('name')
+		.thru((alliesFiltered) => (!_.isEmpty(alliesFiltered) ? { allies: alliesFiltered } : null))
+		.value();
 }
 
 function transformUpdateOneCharacter({

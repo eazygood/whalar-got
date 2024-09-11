@@ -40,7 +40,7 @@ async function createCharactersTable(knex: Knex): Promise<void> {
 		table.text('image_full');
 		table.text('image_thumb');
 		table.charset('utf8mb4');
-    	table.collate('utf8mb4_unicode_ci');
+		table.collate('utf8mb4_unicode_ci');
 	});
 }
 
@@ -56,7 +56,7 @@ async function createActorsTable(knex: Knex): Promise<void> {
 			.inTable(CHARACTERS_TABLE)
 			.onDelete('CASCADE');
 		table.charset('utf8mb4');
-    	table.collate('utf8mb4_unicode_ci');
+		table.collate('utf8mb4_unicode_ci');
 	});
 }
 

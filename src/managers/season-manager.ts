@@ -10,12 +10,12 @@ export async function findMany({
 	transaction,
 }: {
 	app: FastifyInstance;
-	searchQuery: SearchSeasonQuerystring
+	searchQuery: SearchSeasonQuerystring;
 	transaction?: Knex.Transaction;
 }) {
 	if (searchQuery && _.isEmpty(searchQuery.actor_ids)) {
 		return [];
 	}
-	
+
 	return await seasonRepository.findMany({ app, searchQuery, transaction });
 }

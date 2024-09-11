@@ -71,7 +71,6 @@ export async function findMany({
 
 			console.log(searchQuery);
 
-
 			if (_.isEmpty(searchQuery)) {
 				return conn.table(ACTORS_TABLE).select();
 			}
@@ -85,7 +84,6 @@ export async function findMany({
 			if (searchQuery.actor_name) {
 				query.andWhereILike('name', `%${searchQuery.actor_name}%`);
 			}
-
 
 			return query.select();
 		},

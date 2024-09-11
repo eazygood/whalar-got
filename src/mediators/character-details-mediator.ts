@@ -12,9 +12,18 @@ import {
 import { Knex } from 'knex';
 import { FieldTypes, SearchItemsQueryString } from '../routes/schemas/character-search-schemas';
 import { Actor } from '../entities/actor';
+import { House } from '../entities/house';
+import { Character } from '../entities/character';
+import { mapCharacters } from '../managers/character-manager';
 
-
-type ActorWithSeason = Actor & { season_active?: number[]; };
+export type CharactersExtended = {
+	characters: Character[];
+	characterIds: number[];
+};
+export type ActorWithSeason = Actor & { season_active?: number[] };
+export type RelationshipsExtended = { character_id: number; type: string; name: string };
+export type ActionsExtended = { character_id: number; type: string; name: string };
+export type AlliesExtended = { character_id: number; name: string };
 
 const characterRolesArray: FieldTypes[] = Object.values(FieldTypes);
 
@@ -39,259 +48,64 @@ export async function findMany({
 
 	const entityTypesToUse = entityTypes.split(',');
 	const fieldsToUse = (fields ? fields.split(',') : characterRolesArray) as FieldTypes[];
-	const searchForRelatedItemsToUse = !!searchForRelatedItems;
+	const responseResult: any = { characters: [] };
 
-	console.log('searchForRelatedItems ', searchForRelatedItemsToUse, searchForRelatedItems)
-
-	console.log(entityTypesToUse);
-	console.log(fieldsToUse);
-	console.log(searchForRelatedItemsToUse);
-
-	if (entityTypesToUse.includes('character')) {
+	if (entityTypesToUse.includes('character') && searchForRelatedItems) {
 		const { characters, characterIds } = await getCharacters({
 			app,
 			term,
 			fields: fieldsToUse,
 			transaction,
 		});
-		// const actors = !_.isEmpty(characterIds)
-		// 	? await actorManager.findMany({
-		// 			app,
-		// 			searchQuery: {
-		// 				character_ids: characterIds,
-		// 			},
-		// 			transaction,
-		// 		})
-		// 	: [];
 
-		// const actorIds = actors.map((a) => a.id);
-
-		// const seasons = !_.isEmpty(actorIds)
-		// 	? await seasonManager.findMany({
-		// 			app,
-		// 			searchQuery: {
-		// 				actor_ids: actorIds,
-		// 			},
-		// 			transaction,
-		// 		})
-		// 	: [];
-		// const aggregatedActors = actors.map((actor) => {
-		// 	const actorSeasons = seasons.filter((season) => season.actor_id === actor.id);
-
-		// 	const seasonsActive = actorSeasons.map((s) => s.count);
-
-		// 	return {
-		// 		...actor,
-		// 		seasonsActive,
-		// 	};
-		// });
-
-		const { actors } = await getActors({ app, term, fields: fieldsToUse, searchForRelatedItems, characterIds, transaction})
-		const houses = !_.isEmpty(characterIds)
-			? await houseManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: characterIds,
-					},
-					transaction,
-				})
-			: [];
-		const relationships = !_.isEmpty(characterIds)
-			? await relationshipsManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: characterIds,
-					},
-					transaction,
-				})
-			: [];
-
-		const relationshipsRelationToIds = relationships
-			.filter((c) => c.relation_to !== null)
-			.map((c) => c.relation_to) as number[];
-		const relationshipsRelationTo = !_.isEmpty(relationshipsRelationToIds)
-			? await characterManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: relationshipsRelationToIds,
-					},
-					transaction,
-				})
-			: [];
-
-		const relationshipsRelationToMap = _.keyBy(relationships, 'relation_to');
-		const relationshipsRelationToExtended = relationshipsRelationTo.reduce(
-			(extended, relation) => {
-				const matchingData = relationshipsRelationToMap[relation.id];
-
-				if (matchingData && !extended[matchingData.id]) {
-					extended[matchingData.id] = {
-						character_id: matchingData.character_id,
-						type: matchingData.type,
-						name: relation.name,
-					};
-				}
-
-				return extended;
-			},
-			{} as Record<number, any>,
-		);
-
-		const relationshipsRelationsValues = Object.values(relationshipsRelationToExtended);
-
-		console.log('RELATED: ', relationshipsRelationTo);
-		console.log(
-			'RELATED extended: ',
-			relationshipsRelationToExtended,
-			relationshipsRelationToMap,
-		);
-
-		const actions = !_.isEmpty(characterIds)
-			? await actionManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: characterIds,
-					},
-					transaction,
-				})
-			: [];
-		const actionsActonToIds = actions
-			.filter((c) => c.action_to !== null)
-			.map((c) => c.action_to) as number[];
-		const actionsActonToCharacters = !_.isEmpty(actionsActonToIds)
-			? await characterManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: actionsActonToIds,
-					},
-					transaction,
-				})
-			: [];
-
-		const actionsMap = _.keyBy(actions, 'action_to');
-		const actionsExtended = actionsActonToCharacters.reduce(
-			(extended, relation) => {
-				const matchingData = actionsMap[relation.id];
-
-				if (matchingData && !extended[matchingData.id]) {
-					extended[matchingData.id] = {
-						character_id: matchingData.character_id,
-						type: matchingData.type,
-						name: relation.name,
-					};
-				}
-
-				return extended;
-			},
-			{} as Record<number, any>,
-		);
-
-		const actionsExtendedValues = Object.values(actionsExtended);
-
-		console.log('RELATED: ', actionsActonToCharacters);
-		console.log('RELATED extended: ', actionsExtendedValues, actionsMap);
-
-		const allies = !_.isEmpty(characterIds)
-			? await allyManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: characterIds,
-					},
-					transaction,
-				})
-			: [];
-
-		const alliesAllyToIds = allies
-			.filter((c) => c.ally_to !== null)
-			.map((c) => c.ally_to) as number[];
-		const alliesAllyToCharacters = !_.isEmpty(alliesAllyToIds)
-			? await characterManager.findMany({
-					app,
-					searchQuery: {
-						character_ids: alliesAllyToIds,
-					},
-					transaction,
-				})
-			: [];
-
-		const alliesMap = _.keyBy(allies, 'ally_to');
-		const alliesExtended = alliesAllyToCharacters.reduce(
-			(extended, relation) => {
-				const matchingData = alliesMap[relation.id];
-
-				if (matchingData && !extended[matchingData.id]) {
-					extended[matchingData.id] = {
-						...matchingData,
-						name: relation.name,
-					};
-				}
-
-				return extended;
-			},
-			{} as Record<number, any>,
-		);
-
-		const alliesExtendedValues = Object.values(alliesExtended);
-
-		const aggregatedData = characters.map((character) => {
-			const characterActors = actors.filter(
-				(actor) => actor.character_id === character.id,
-			);
-			const characterHouse = houses.find((house) => house.character_id === character.id);
-
-			const relationships = relationshipsRelationsValues.filter(
-				(r) => r.character_id === character.id,
-			);
-			const relationshipsMapped = _.mapValues(_.groupBy(relationships, 'type'), (items) =>
-				items.map((item) => item.name),
-			);
-
-			const actions = actionsExtendedValues.filter((r) => r.character_id === character.id);
-			const actionsMapped = _.mapValues(_.groupBy(actions, 'type'), (items) =>
-				items.map((item) => item.name),
-			);
-
-			const alliesMapped = alliesExtendedValues
-				.filter((r) => r.character_id === character.id)
-				.map((a) => a.name);
-
-			const multipleActors = characterActors.map((actor) => ({
-				actorName: actor.name,
-				actorLink: actor.link,
-				seasonsActive: actor.season_active,
-			}));
-
-			const actorsData = {
-				...(multipleActors.length > 1
-					? { actors: multipleActors }
-					: {
-							...(!_.isEmpty(multipleActors)
-								? {
-										actorName: multipleActors[0].actorName,
-										actorLink: multipleActors[0].actorLink,
-									}
-								: null),
-						}),
-			};
-
-			const allies = !_.isEmpty(alliesMapped) ? { allies: alliesMapped } : null;
-
-			// Merge
-			return {
-				characterName: character.name,
-				...(characterHouse?.name ? { houseName: characterHouse?.name } : null),
-				...(character.image_thumb ? { characterImageThumb: character.image_thumb } : null),
-				...(character.image_full ? { characterImageFull: character.image_full } : null),
-				...(character.link ? { characterLink: character.link } : null),
-				...actorsData,
-				...relationshipsMapped,
-				...actionsMapped,
-				...allies,
-			};
+		const actors = await getActors({
+			app,
+			term,
+			fields: fieldsToUse,
+			searchForRelatedItems,
+			characterIds,
+			transaction,
 		});
 
-		// console.log('extended: ', Object.values(chartersExtended));
-		console.log('extended: ', aggregatedData);
+		const houses = await getHouses({
+			app,
+			searchForRelatedItems,
+			characterIds,
+			transaction,
+		});
+
+		const relationships = await getRelationship({
+			app,
+			characterIds,
+			searchForRelatedItems,
+			transaction,
+		});
+
+		const actions = await getActions({
+			app,
+			characterIds,
+			searchForRelatedItems,
+			transaction,
+		});
+
+		const allies = await getAllies({
+			app,
+			searchForRelatedItems,
+			characterIds,
+			transaction,
+		});
+
+		const mappedData = mapCharacters({
+			actors,
+			houses,
+			actions,
+			allies,
+			characters,
+			relationships,
+		});
+
+		console.log(mappedData);
+		responseResult.characters = mappedData;
 	}
 
 	if (entityTypesToUse.includes('actor')) {
@@ -346,6 +160,8 @@ export async function findMany({
 	// find houses by characters id
 	// find actors by characters id
 	// find seasons by actor id
+
+	return responseResult;
 }
 
 async function getCharacters({
@@ -358,7 +174,7 @@ async function getCharacters({
 	term: string;
 	fields: FieldTypes[];
 	transaction?: Knex.Transaction;
-}) {
+}): Promise<CharactersExtended> {
 	const fieldsToSearch: { name?: string; nickname?: string } = {};
 	if (fields.includes(FieldTypes.name)) {
 		fieldsToSearch[FieldTypes.name] = term;
@@ -400,23 +216,19 @@ async function getActors({
 	searchForRelatedItems: boolean;
 	characterIds?: number[];
 	transaction?: Knex.Transaction;
-}): Promise<{ actors: ActorWithSeason[] }> {
+}): Promise<ActorWithSeason[]> {
 	if (!fields.includes(FieldTypes.actorName)) {
 		throw new Error('Search: actor fields not provided');
 	}
 
 	if (!searchForRelatedItems) {
-		const actors = await actorManager.findMany({
+		return await actorManager.findMany({
 			app,
 			searchQuery: {
 				actor_name: term,
 			},
 			transaction,
 		});
-
-		return {
-			actors,
-		};
 	}
 
 	const actors = await actorManager.findMany({
@@ -437,7 +249,7 @@ async function getActors({
 		transaction,
 	});
 
-	const actorsMapped = actors.map((actor) => {
+	return actors.map((actor) => {
 		const actorSeasons = seasons.filter((season) => season.actor_id === actor.id);
 		const seasonsActive = actorSeasons.map((s) => s.count);
 
@@ -446,8 +258,189 @@ async function getActors({
 			seasonsActive,
 		};
 	});
+}
 
-	return {
-		actors: actorsMapped,
-	};
+async function getRelationship({
+	app,
+	searchForRelatedItems = false,
+	characterIds = [],
+	transaction,
+}: {
+	app: FastifyInstance;
+	searchForRelatedItems: boolean;
+	characterIds?: number[];
+	transaction?: Knex.Transaction;
+}): Promise<RelationshipsExtended[] | []> {
+	if (!searchForRelatedItems || _.isEmpty(characterIds)) {
+		return [];
+	}
+	const relationships = await relationshipsManager.findMany({
+		app,
+		searchQuery: {
+			character_ids: characterIds,
+		},
+		transaction,
+	});
+
+	const relationshipsRelationToIds = relationships
+		.filter((c) => c.relation_to !== null)
+		.map((c) => c.relation_to) as number[];
+
+	if (_.isEmpty(relationshipsRelationToIds)) {
+		return [];
+	}
+
+	const relationshipsCharacters = await characterManager.findMany({
+		app,
+		searchQuery: {
+			character_ids: relationshipsRelationToIds,
+		},
+		transaction,
+	});
+
+	const characterMap = _.keyBy(relationshipsCharacters, 'id');
+	const aggregated = relationships
+		.filter((r) => r.relation_to !== null)
+		.map((r) => ({
+			character_id: r.character_id,
+			type: r.type,
+			name: characterMap[r.relation_to as number].name,
+		}));
+
+	return aggregated;
+}
+
+async function getActions({
+	app,
+	searchForRelatedItems = false,
+	characterIds = [],
+	transaction,
+}: {
+	app: FastifyInstance;
+	searchForRelatedItems: boolean;
+	characterIds?: number[];
+	transaction?: Knex.Transaction;
+}): Promise<ActionsExtended[] | []> {
+	if (!searchForRelatedItems || _.isEmpty(characterIds)) {
+		return [];
+	}
+	const actions = await actionManager.findMany({
+		app,
+		searchQuery: {
+			character_ids: characterIds,
+		},
+		transaction,
+	});
+
+	const actonToIds = actions
+		.filter((c) => c.action_to !== null)
+		.map((c) => c.action_to) as number[];
+
+	const actonCharacters = !_.isEmpty(actonToIds)
+		? await characterManager.findMany({
+				app,
+				searchQuery: {
+					character_ids: actonToIds,
+				},
+				transaction,
+			})
+		: [];
+
+	const characterMap = _.keyBy(actonCharacters, 'id');
+	const aggregated = actions
+		.filter((action) => action.action_to !== null)
+		.map((action) => ({
+			character_id: action.character_id,
+			type: action.type,
+			name: characterMap[action.action_to as number].name,
+		}));
+
+	return aggregated;
+}
+
+async function getAllies({
+	app,
+	searchForRelatedItems = false,
+	characterIds = [],
+	transaction,
+}: {
+	app: FastifyInstance;
+	searchForRelatedItems: boolean;
+	characterIds?: number[];
+	transaction?: Knex.Transaction;
+}): Promise<AlliesExtended[] | []> {
+	if (!searchForRelatedItems || _.isEmpty(characterIds)) {
+		return [];
+	}
+	const allies = await allyManager.findMany({
+		app,
+		searchQuery: {
+			character_ids: characterIds,
+		},
+		transaction,
+	});
+
+	const allyToIds = allies.filter((c) => c.ally_to !== null).map((c) => c.ally_to) as number[];
+
+	const allyCharacters = !_.isEmpty(allyToIds)
+		? await characterManager.findMany({
+				app,
+				searchQuery: {
+					character_ids: allyToIds,
+				},
+				transaction,
+			})
+		: [];
+
+	const alliesMap = _.keyBy(allies, 'ally_to');
+
+	const alliesExtended = allyCharacters.reduce(
+		(extended, relation) => {
+			const matchingData = alliesMap[relation.id];
+
+			if (matchingData && !extended[matchingData.id]) {
+				extended[matchingData.id] = {
+					character_ids: matchingData.character_id,
+					name: relation.name,
+				};
+			}
+
+			return extended;
+		},
+		{} as Record<number, any>,
+	);
+
+	const characterMap = _.keyBy(allyCharacters, 'id');
+	const aggregated = allies
+		.filter((ally) => ally.ally_to !== null)
+		.map((ally) => ({
+			character_id: ally.character_id,
+			name: characterMap[ally.ally_to as number].name,
+		}));
+
+	return aggregated;
+}
+
+async function getHouses({
+	app,
+	searchForRelatedItems = false,
+	characterIds = [],
+	transaction,
+}: {
+	app: FastifyInstance;
+	searchForRelatedItems: boolean;
+	characterIds?: number[];
+	transaction?: Knex.Transaction;
+}): Promise<House[] | []> {
+	if (!searchForRelatedItems || _.isEmpty(characterIds)) {
+		return [];
+	}
+
+	return await houseManager.findMany({
+		app,
+		searchQuery: {
+			character_ids: characterIds,
+		},
+		transaction,
+	});
 }

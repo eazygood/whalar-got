@@ -1,10 +1,10 @@
-import { FastifyInstance } from "fastify";
-import { Knex } from "knex";
-import _ from "lodash";
+import { FastifyInstance } from 'fastify';
+import { Knex } from 'knex';
+import _ from 'lodash';
 import * as db from '../connectors/mysql-connector';
-import { ALLIES_TABLE } from "../db/constants";
-import { Ally } from "../entities/ally";
-import { SearchAllyQuerystring } from "../routes/schemas/character-search-schemas";
+import { ALLIES_TABLE } from '../db/constants';
+import { Ally } from '../entities/ally';
+import { SearchAllyQuerystring } from '../routes/schemas/character-search-schemas';
 
 export async function findMany({
 	app,
