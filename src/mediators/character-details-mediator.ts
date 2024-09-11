@@ -11,10 +11,9 @@ import {
 } from '../managers';
 import { Knex } from 'knex';
 import { FieldTypes, SearchItemsQueryString } from '../routes/schemas/character-search-schemas';
-import { Actor } from '../entities/actor';
-import { House } from '../entities/house';
-import { Character } from '../entities/character';
+import { Character, Actor, House } from '../entities';
 import { mapCharacters } from '../managers/character-manager';
+import { parseBoolean } from '../tools/querystring';
 
 export type CharactersExtended = {
 	characters: Character[];
@@ -36,7 +35,9 @@ export async function findMany({
 	searchQuery: SearchItemsQueryString;
 	transaction?: Knex.Transaction;
 }) {
-	const { term, entityTypes, fields, searchForRelatedItems } = searchQuery;
+	let { term, entityTypes, fields, searchForRelatedItems } = searchQuery;
+
+	console.log('searchForRelatedItems ', typeof searchForRelatedItems);
 
 	if (!term) {
 		throw new Error('Search: term not defined');
@@ -44,6 +45,10 @@ export async function findMany({
 
 	if (!entityTypes) {
 		throw new Error('Search: at least 1 entity type should be defined');
+	}
+
+	if (typeof searchForRelatedItems === 'string') {
+		searchForRelatedItems = parseBoolean(searchForRelatedItems);
 	}
 
 	const entityTypesToUse = entityTypes.split(',');
@@ -104,14 +109,24 @@ export async function findMany({
 			relationships,
 		});
 
-		console.log(mappedData);
 		responseResult.characters = mappedData;
+	} else {
+		const { characters } = await getCharacters({
+			app,
+			term,
+			fields: fieldsToUse,
+			transaction,
+		});
+
+		responseResult.characters = characters;
 	}
 
-	if (entityTypesToUse.includes('actor')) {
+	// TODO: add logic for actor entity + related items
+	if (entityTypesToUse.includes('actor') && searchForRelatedItems) {
 	}
 
-	if (entityTypesToUse.includes('house')) {
+	// TODO: add logic for actor entity + related items
+	if (entityTypesToUse.includes('house') && searchForRelatedItems) {
 	}
 
 	// ?term="looking for it",entityTypes=character,actor,house,ally,relationship,action,season,fields=name,nickname,actor_name,house_name,link

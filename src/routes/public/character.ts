@@ -5,6 +5,7 @@ import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
 import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
+import { parseBoolean } from '../../tools/querystring';
 
 export const createCharacter: Route<{
 	Reply: characterSchemas.CreateOneCharactersReply;
