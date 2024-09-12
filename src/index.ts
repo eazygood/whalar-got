@@ -1,11 +1,21 @@
-import app from './app';
+import main from './app';
+import { unexpectedErrorHandler, gracefullyShutdown } from './tools/exit-handler';
 
-app.listen({ port: 5500, host: '0.0.0.0' }, (err, address) => {
-	if (err) {
+
+const startServer = async () => {
+	const app = await main()
+
+	process.on('uncaughtException', (err) => unexpectedErrorHandler(app, err))
+    process.on('unhandledRejection', (err) => unexpectedErrorHandler(app, err))
+    process.on('SIGTERM', () => gracefullyShutdown(app))
+    process.on('SIGINT', () => gracefullyShutdown(app))
+
+	try {
+		await app.listen({ port: 5500, host: '0.0.0.0' });
+	} catch (err) {
 		app.log.error(err);
-		console.error(err);
 		process.exit(1);
 	}
+}
 
-	console.log(`Server listening at ${address}`);
-});
+startServer();

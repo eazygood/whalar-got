@@ -1,5 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 import { Nullable, TypeObject } from '../../../tools/typebox';
+import { GeneralResponse } from '../general-schema';
 
 export type DeleteOneCharacterParam = Static<typeof DeleteOneCharacterParam>;
 export const DeleteOneCharacterParam = Type.Object({
@@ -7,7 +8,4 @@ export const DeleteOneCharacterParam = Type.Object({
 });
 
 export type DeleteOneCharacterReply = Static<typeof DeleteOneCharacterReply>;
-export const DeleteOneCharacterReply = TypeObject({
-	success: Type.Boolean(),
-	error: Type.Optional(Type.String()),
-});
+export const DeleteOneCharacterReply = GeneralResponse;

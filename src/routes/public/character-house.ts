@@ -11,6 +11,8 @@ export const createCharacterHouse: Route<{
 		response: {
 			200: characterHouseSchemas.CreateOneCharacterHouseReply,
 		},
+		description: 'Add character\'s house',
+		tags: ['house'],
 	},
 	async handler(request, reply) {
 		// return reply.status(200).send({ data: {}} );
@@ -27,6 +29,8 @@ export const deleteCharacterHouse: Route<{
 		response: {
 			200: characterHouseSchemas.DeleteOneCharacterHouseReply,
 		},
+		description: 'Delete character\'s house',
+		tags: ['house'],
 	},
 	async handler(request, reply) {
 		// return reply.status(200).send({ data: {}} );

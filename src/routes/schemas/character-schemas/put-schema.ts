@@ -1,5 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 import { TypeObject, Nullable } from '../../../tools/typebox';
+import { GeneralResponse } from '../general-schema';
 
 export type UpdateOneCharactersParam = Static<typeof UpdateOneCharactersParam>;
 export const UpdateOneCharactersParam = Type.Object({
@@ -18,13 +19,4 @@ export const UpdateOneCharactersBody = TypeObject({
 });
 
 export type UpdateOneCharactersReply = Static<typeof UpdateOneCharactersReply>;
-export const UpdateOneCharactersReply = TypeObject({
-	success: Type.Boolean(),
-	error: Type.Optional(Type.String()),
-});
-
-export type UpdateErrorCharactersReply = Static<typeof UpdateErrorCharactersReply>;
-export const UpdateErrorCharactersReply = TypeObject({
-	success: Type.Boolean(),
-	error: Type.Optional(Type.String()),
-});
+export const UpdateOneCharactersReply = GeneralResponse;

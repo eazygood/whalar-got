@@ -1,14 +1,28 @@
 import fastify from 'fastify';
-import fastifyRabbitMQ from 'fastify-amqp';
+import fastifyRabbitMq from 'fastify-amqp';
+
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+
 import knexPlugin from './plugins/knex-plugin';
-import * as mysqlConnector from './connectors/mysql-connector';
-import * as rabbitmqConnector from './connectors/rabbitmq-connector';
 import registerPublicRoutes from './routes';
 
-const f = fastify();
+import { swaggerConfig } from './config/swagger-config';
+import { mysqlConfig, registerMysqlDatabase } from './connectors/mysql-connector';
 
-export default f
-	.register(knexPlugin, mysqlConnector.getConfig)
-	.register(mysqlConnector.registerMysqlDatabase)
-	// .register(fastifyRabbitMQ, rabbitmqConnector.getConfig())
-	.register(registerPublicRoutes, { prefix: 'characters' });
+
+export default async function main() {
+	const app = fastify();
+
+	await app
+		.register(swagger, swaggerConfig)
+		.register(swaggerUi, {
+			routePrefix: '/docs',
+		})
+		.register(knexPlugin, mysqlConfig)
+		.register(registerMysqlDatabase)
+		.register(registerPublicRoutes, { prefix: 'characters' });
+		// .register(fastifyRabbitMQ, rabbitmqConnector.getConfig())
+
+	return app;
+}

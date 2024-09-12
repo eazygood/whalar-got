@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import path from 'path';
 import { Knex } from 'knex';
 
-export function getConfig() {
+export function mysqlConfig() {
 	if (process.env.TEST_MYSQL_CONNETION_URI) {
 		return {
 			client: 'mysql2',
@@ -30,9 +30,9 @@ export async function registerMysqlDatabase(app: FastifyInstance): Promise<void>
 	});
 
 	// if (process.env.TEST_ENV) {
-	// 	await app.knex.seed.run({
-	// 		directory: path.join(__dirname, '../db/seeds'),
-	// 	});
+		await app.knex.seed.run({
+			directory: path.join(__dirname, '../db/seeds'),
+		});
 	// }
 }
 

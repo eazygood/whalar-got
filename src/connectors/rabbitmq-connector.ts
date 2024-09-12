@@ -1,4 +1,4 @@
-export function getConfig() {
+export function rabbitmqConfig() {
 	return {
 		hostname: process.env.RABBITMQ_HOST || 'localhost',
 		port: Number(process.env.RABBITMQ_PORT) || 5672,

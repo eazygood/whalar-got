@@ -1,6 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 import { TypeObject, Nullable } from '../../../tools/typebox';
 import { CharacterSchema } from '../../../entities/character';
+import { GeneralResponse } from '../general-schema';
 
 export type CreateOneCharactersBody = Static<typeof CreateOneCharactersBody>;
 export const CreateOneCharactersBody = TypeObject({
@@ -14,7 +15,9 @@ export const CreateOneCharactersBody = TypeObject({
 });
 
 export type CreateOneCharactersReply = Static<typeof CreateOneCharactersReply>;
-export const CreateOneCharactersReply = TypeObject({
-	data: Nullable(CharacterSchema),
-	error: Type.Optional(Type.String()),
-});
+export const CreateOneCharactersReply = Type.Intersect([
+	TypeObject({
+		data: Nullable(CharacterSchema),
+	}),
+	GeneralResponse
+]);
