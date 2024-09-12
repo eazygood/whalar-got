@@ -1,11 +1,13 @@
 import { Route } from '../schemas/route';
+import Ajv from "ajv"
 import _ from 'lodash';
 import * as characterManager from '../../managers/character-manager';
 import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
 import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
-import { parseBoolean } from '../../tools/querystring';
+
+const ajv = new Ajv()
 
 export const createCharacter: Route<{
 	Reply: characterSchemas.CreateOneCharactersReply;
@@ -19,6 +21,10 @@ export const createCharacter: Route<{
 		},
 	},
 	async handler(request, reply) {
+		if (!ajv.validate(characterSchemas.CreateOneCharactersBody, request.body)) {
+			return reply.status(400).send({ data: null, error: ajv.errorsText() });
+		}
+
 		const created = await withinTransaction({
 			app: request.server,
 			callback: async (transaction) => {
@@ -46,11 +52,22 @@ export const getCharacter: Route<{
 		},
 	},
 	async handler(request, reply) {
-		const character =
-			(await characterManager.findOne({
-				app: request.server,
-				characterId: Number(request.params.character_id),
-			})) ?? null;
+		if (!ajv.validate(characterSchemas.FindOneCharactersParam, request.params)) {
+			return reply.status(400).send({ data: null, error: ajv.errorsText() });
+		}
+
+		if (isNaN(Number(request.params.character_id))) {
+			return reply.status(400).send({ data: null, error: 'character_id must be a number' });
+		}
+
+		const character = await characterManager.findOne({
+			app: request.server,
+			characterId: Number(request.params.character_id)
+		});
+
+		if (!character) {
+			return reply.status(404).send({ data: null });
+		}
 
 		return reply.status(200).send({ data: character });
 	},
@@ -68,10 +85,18 @@ export const updateCharacter: Route<{
 		body: characterSchemas.UpdateOneCharactersBody,
 		response: {
 			200: characterSchemas.UpdateOneCharactersReply,
+			404: characterSchemas.UpdateErrorCharactersReply
 		},
 	},
 	async handler(request, reply) {
-		await withinTransaction({
+		const paramValidation = ajv.validate(characterSchemas.UpdateOneCharactersParam, request.params);
+		const bodyValidation = ajv.validate(characterSchemas.UpdateOneCharactersBody, request.body);
+		
+		if (!paramValidation || !bodyValidation) {
+			return reply.status(400).send({ success: false, error: ajv.errorsText() });
+		}
+
+		const data =  await withinTransaction({
 			app: request.server,
 			callback: async (transaction) => {
 				return characterManager.updateOne({
@@ -83,7 +108,13 @@ export const updateCharacter: Route<{
 			},
 		});
 
-		return reply.status(200).send();
+		const isUpdated = Boolean(data)
+
+		if (!isUpdated) {
+			return reply.status(404).send({ success: isUpdated, error: 'ok' });
+		}
+
+		return reply.status(200).send({ success: isUpdated });
 	},
 };
 
@@ -99,6 +130,14 @@ export const deleteCharacter: Route<{
 		},
 	},
 	async handler(request, reply) {
+		if (!ajv.validate(characterSchemas.DeleteOneCharacterParam, request.params)) {
+			return reply.status(400).send({ success: false, error: ajv.errorsText() });
+		}
+
+		if (isNaN(Number(request.params.character_id))) {
+			return reply.status(400).send({ success: false, error: 'character_id must be a number' });
+		}
+		
 		const id = await withinTransaction({
 			app: request.server,
 			callback: async (transaction) => {
@@ -110,7 +149,11 @@ export const deleteCharacter: Route<{
 			},
 		});
 
-		return reply.status(200).send({ id });
+		if (!id) {
+			return reply.status(404).send({ success: false });
+		}
+
+		return reply.status(200).send({ success: Boolean(id) });
 	},
 };
 

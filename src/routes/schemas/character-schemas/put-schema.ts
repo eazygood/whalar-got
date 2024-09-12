@@ -19,5 +19,12 @@ export const UpdateOneCharactersBody = TypeObject({
 
 export type UpdateOneCharactersReply = Static<typeof UpdateOneCharactersReply>;
 export const UpdateOneCharactersReply = TypeObject({
-	status: Type.String(),
+	success: Type.Boolean(),
+	error: Type.Optional(Type.String()),
+});
+
+export type UpdateErrorCharactersReply = Static<typeof UpdateErrorCharactersReply>;
+export const UpdateErrorCharactersReply = TypeObject({
+	success: Type.Boolean(),
+	error: Type.Optional(Type.String()),
 });

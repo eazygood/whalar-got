@@ -118,9 +118,23 @@ export async function deleteOne({
 		app,
 		transaction,
 		callback: async (conn) => {
-			await conn.table(CHARACTERS_TABLE).delete().where({ id });
-
-			return id;
+			return await conn.table(CHARACTERS_TABLE).delete().where({ id });
 		},
+	});
+}
+
+export async function deleteAll({
+	app,
+	transaction,
+}: {
+	app: FastifyInstance;
+	transaction?: Knex.Transaction;
+}): Promise<void> {
+	return await db.buildAndRun<void>({
+		app,
+		transaction,
+		callback: async (conn) => {
+			await conn.table(CHARACTERS_TABLE).del();
+		}
 	});
 }

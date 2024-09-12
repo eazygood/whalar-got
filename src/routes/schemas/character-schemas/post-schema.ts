@@ -14,4 +14,7 @@ export const CreateOneCharactersBody = TypeObject({
 });
 
 export type CreateOneCharactersReply = Static<typeof CreateOneCharactersReply>;
-export const CreateOneCharactersReply = TypeObject({ data: CharacterSchema });
+export const CreateOneCharactersReply = TypeObject({
+	data: Nullable(CharacterSchema),
+	error: Type.Optional(Type.String()),
+});

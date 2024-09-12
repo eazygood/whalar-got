@@ -3,6 +3,12 @@ import path from 'path';
 import { Knex } from 'knex';
 
 export function getConfig() {
+	if (process.env.TEST_MYSQL_CONNETION_URI) {
+		return {
+			client: 'mysql2',
+			connection: process.env.TEST_MYSQL_CONNETION_URI,
+		};
+	}
 	return {
 		client: 'mysql2',
 		connection: {
@@ -10,6 +16,7 @@ export function getConfig() {
 			user: process.env.MYSQL_USER,
 			password: process.env.MYSQL_PASSWORD,
 			database: process.env.MYSQL_DATABASE,
+			port: process.env.MYSQL_PORT || '3306',
 		},
 	};
 }
@@ -17,16 +24,16 @@ export function getConfig() {
 export async function registerMysqlDatabase(app: FastifyInstance): Promise<void> {
 	await app.knex.raw('SELECT 1');
 
-	console.log('run seeds');
-
 	await app.knex.migrate.latest({
-		database: 'db',
+		database: process.env.MYSQL_DATABASE,
 		directory: path.join(__dirname, '../db/migrations'),
 	});
 
-	await app.knex.seed.run({
-		directory: path.join(__dirname, '../db/seeds'),
-	});
+	// if (process.env.TEST_ENV) {
+	// 	await app.knex.seed.run({
+	// 		directory: path.join(__dirname, '../db/seeds'),
+	// 	});
+	// }
 }
 
 export async function buildAndRun<T>({
@@ -42,7 +49,9 @@ export async function buildAndRun<T>({
 		const conenction = transaction || app.knex;
 		return await callback(conenction);
 	} catch (err) {
-		throw new Error('An error occurred while calling the database');
+		throw new Error('An error occurred while calling the database', {
+			cause: err,
+		});
 	}
 }
 

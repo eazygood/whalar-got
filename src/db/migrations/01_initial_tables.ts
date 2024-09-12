@@ -30,6 +30,11 @@ export async function down(knex: Knex) {
 }
 
 async function createCharactersTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(CHARACTERS_TABLE);
+	if (exists) {
+		return;
+	}
+
 	await knex.schema.createTable(CHARACTERS_TABLE, (table) => {
 		table.increments('id').primary();
 		table.string('name', 100).notNullable();
@@ -45,6 +50,10 @@ async function createCharactersTable(knex: Knex): Promise<void> {
 }
 
 async function createActorsTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(ACTORS_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(ACTORS_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();
@@ -61,6 +70,10 @@ async function createActorsTable(knex: Knex): Promise<void> {
 }
 
 async function createSeasonsTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(SEASONS_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(SEASONS_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('actor_id').unsigned();
@@ -70,6 +83,10 @@ async function createSeasonsTable(knex: Knex): Promise<void> {
 }
 
 async function createHousesTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(HOUSES_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(HOUSES_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();
@@ -85,6 +102,10 @@ async function createHousesTable(knex: Knex): Promise<void> {
 }
 
 async function createAlliesTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(ALLIES_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(ALLIES_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();
@@ -102,6 +123,10 @@ async function createAlliesTable(knex: Knex): Promise<void> {
 }
 
 async function createActionsTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(ACTIONS_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(ACTIONS_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();
@@ -127,6 +152,10 @@ async function createActionsTable(knex: Knex): Promise<void> {
 }
 
 async function createRelationshipsTable(knex: Knex): Promise<void> {
+	const exists = await knex.schema.hasTable(RELATIONSHIPS_TABLE);
+	if (exists) {
+		return;
+	}
 	await knex.schema.createTable(RELATIONSHIPS_TABLE, (table) => {
 		table.increments('id').primary();
 		table.integer('character_id').unsigned();

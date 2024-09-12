@@ -97,6 +97,16 @@ export async function deleteOne({
 	return await characterRepository.deleteOne({ app, id: characterId, transaction });
 }
 
+export async function deleteAll({
+	app,
+	transaction,
+}: {
+	app: FastifyInstance;
+	transaction?: Knex.Transaction;
+}) {
+	return await characterRepository.deleteAll({ app, transaction });
+}
+
 export async function search({
 	app,
 	searchQuery,
