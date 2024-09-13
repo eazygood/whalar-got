@@ -134,9 +134,6 @@ export async function findMany({
 	if (entityTypesToUse.includes('house') && searchForRelatedItems) {
 	}
 
-	// ?term="looking for it",entityTypes=character,actor,house,ally,relationship,action,season,fields=name,nickname,actor_name,house_name,link
-	// term= string
-
 	return responseResult;
 }
 
