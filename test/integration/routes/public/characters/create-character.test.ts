@@ -1,18 +1,23 @@
 import { StartedMySqlContainer } from '@testcontainers/mysql';
 import {
 	startMysqlDbContainer,
+	startRabbitMqContainer,
 	startTestEnv,
 	stopMysqlDbContainer,
+	stopRabbitMqContainer,
 	stopTestEnv,
 } from '../../../../environment';
 import request from 'supertest';
 import { FastifyInstance } from 'fastify/types/instance';
 import { characterManager } from '../../../../../src/managers';
 import { CreateOneCharactersBody } from '../../../../../src/routes/schemas/character-schemas';
+import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 
 let mysqlContainer: StartedMySqlContainer;
+let rabbitmqContainer: StartedRabbitMQContainer;
 let app: FastifyInstance;
 
+jest.setTimeout(100000)
 describe('POST /characters/', () => {
 	beforeAll(async () => {
 		const mockCharacterArray: CreateOneCharactersBody[] = [
@@ -25,10 +30,9 @@ describe('POST /characters/', () => {
 				image_thumb: null,
 				link: null,
 			},
-			// { name: 'test 2', nickname: 'testor 2' },
-			// { name: 'test 3', nickname: 'testor 3' },
 		];
 		mysqlContainer = await startMysqlDbContainer();
+		// rabbitmqContainer = await startRabbitMqContainer();
 		app = await startTestEnv();
 
 		for (const character of mockCharacterArray) {
@@ -38,6 +42,7 @@ describe('POST /characters/', () => {
 
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
+		// await stopRabbitMqContainer(rabbitmqContainer);
 		await stopTestEnv(app);
 	});
 

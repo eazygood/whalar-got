@@ -1,16 +1,20 @@
 import { StartedMySqlContainer } from '@testcontainers/mysql';
 import {
 	startMysqlDbContainer,
+	startRabbitMqContainer,
 	startTestEnv,
 	stopMysqlDbContainer,
+	stopRabbitMqContainer,
 	stopTestEnv,
 } from '../../../../environment';
 import request from 'supertest';
 import { FastifyInstance } from 'fastify/types/instance';
 import { characterManager } from '../../../../../src/managers';
 import { CreateOneCharactersBody } from '../../../../../src/routes/schemas/character-schemas';
+import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 
 let mysqlContainer: StartedMySqlContainer;
+let rabbitmqContainer: StartedRabbitMQContainer;
 let app: FastifyInstance;
 
 describe('POST /characters/:character_id', () => {
@@ -27,6 +31,7 @@ describe('POST /characters/:character_id', () => {
 			},
 		];
 		mysqlContainer = await startMysqlDbContainer();
+		// rabbitmqContainer = await startRabbitMqContainer();
 		app = await startTestEnv();
 
 		for (const character of mockCharacterArray) {
@@ -36,6 +41,11 @@ describe('POST /characters/:character_id', () => {
 
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
+		// await stopRabbitMqContainer(rabbitmqContainer);
 		await stopTestEnv(app);
 	});
+
+	it('add test', () => {
+		expect(true).toBe(true);
+	})
 });

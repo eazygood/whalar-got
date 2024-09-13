@@ -10,7 +10,8 @@
     "start:watch": "ts-node-dev --poll --respawn --transpile-only src/index.ts",
     "test": "TEST_ENV=true jest --forceExit",
     "test:watch": "TEST_ENV=true jest --watch",
-    "test:unit": "jest -- test/unit",
+    "test:unit:watch": "TEST_ENV=true jest --watch -- test/unit",
+    "test:unit": "TEST_ENV=true jest -- test/unit",
     "coverage": "jest --coverage",
     "lint": "eslint .",
     "lint-staged": "lint-staged",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@testcontainers/mysql": "^10.13.1",
+    "@testcontainers/rabbitmq": "^10.13.1",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.7",
     "@types/node": "^22.5.4",

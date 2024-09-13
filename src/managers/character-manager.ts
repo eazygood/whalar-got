@@ -85,7 +85,7 @@ export async function updateOne({
 	return await characterRepository.updateOne({
 		app,
 		id: characterId,
-		data: transformUpdateOneCharacter({ characterId, data: updateData }),
+		data: updateData,
 		transaction,
 	});
 }
@@ -222,19 +222,6 @@ function mapAllies({ allies, characterId }: { allies: AlliesExtended[]; characte
 		.map('name')
 		.thru((alliesFiltered) => (!_.isEmpty(alliesFiltered) ? { allies: alliesFiltered } : null))
 		.value();
-}
-
-function transformUpdateOneCharacter({
-	characterId,
-	data,
-}: {
-	characterId: number;
-	data: UpdateOneCharactersBody | CreateOneCharactersBody;
-}): Character {
-	return {
-		id: characterId,
-		...data,
-	};
 }
 
 export async function processMessage({ app, message }: { app: FastifyInstance; message: string }) {

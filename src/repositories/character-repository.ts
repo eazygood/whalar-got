@@ -5,6 +5,7 @@ import { Character, CharacterToAdd } from '../entities/character';
 import { CHARACTERS_TABLE } from '../db/constants';
 import { Knex } from 'knex';
 import { SearchCharactersQuerystring } from '../routes/schemas/character-search-schemas';
+import { UpdateOneCharactersBody } from '../routes/schemas/character-schemas';
 
 export async function findOne({
 	app,
@@ -93,14 +94,14 @@ export async function updateOne({
 }: {
 	app: FastifyInstance;
 	id: number;
-	data: Character;
+	data: UpdateOneCharactersBody;
 	transaction?: Knex.Transaction;
 }) {
 	return await db.buildAndRun<Character>({
 		app,
 		transaction,
 		callback: async (conn) => {
-			return conn.table(CHARACTERS_TABLE).update<Character>(_.omit(data, 'id')).where({ id });
+			return conn.table(CHARACTERS_TABLE).update<Character>(data).where({ id });
 		},
 	});
 }

@@ -6,6 +6,8 @@ import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
 import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
+import { produceToRabbitMq } from '../../message-queues/producers/rabbitmq-producer';
+import { CREATE_CHARACTERS_QUEUE_RABBITMQ } from '../../message-queues/constants';
 
 const ajv = new Ajv();
 
@@ -28,26 +30,22 @@ export const createCharacter: Route<{
 			return reply.status(400).send({ data: null, success: false, error: ajv.errorsText() });
 		}
 
-		// const created = await withinTransaction({
-		// 	app: request.server,
-		// 	callback: async (transaction) => {
-		// 		return characterManager.createOne({
-		// 			app: request.server,
-		// 			createData: request.body,
-		// 			transaction,
-		// 		});
-		// 	},
-		// });
-
-		const queue = 'hello';
-		const channel = request.server.amqp.channel;
-		await channel.assertQueue(queue, {
-			durable: true,
+		const created = await withinTransaction({
+			app: request.server,
+			callback: async (transaction) => {
+				return characterManager.createOne({
+					app: request.server,
+					createData: request.body,
+					transaction,
+				});
+			},
 		});
 
-		channel.sendToQueue(queue, Buffer.from(JSON.stringify(request.body)));
-
-		return reply.status(200).send({ data: null, success: true });
+		if (process.env.PRODUCE_TO_QUEUE) {
+			await  produceToRabbitMq({ app: request.server, queue: CREATE_CHARACTERS_QUEUE_RABBITMQ, body: request.body})
+		}
+		
+		return reply.status(200).send({ data: created, success: true });
 	},
 };
 
@@ -82,6 +80,8 @@ export const getCharacter: Route<{
 			characterId: Number(request.params.character_id),
 		});
 
+		console.log(character);
+
 		if (!character) {
 			return reply.status(404).send({ data: null, success: false });
 		}
@@ -102,7 +102,6 @@ export const updateCharacter: Route<{
 		body: characterSchemas.UpdateOneCharactersBody,
 		response: {
 			200: characterSchemas.UpdateOneCharactersReply,
-			400: characterSchemas.UpdateOneCharactersReply,
 			404: characterSchemas.UpdateOneCharactersReply,
 		},
 		description: 'Update character by ID',
@@ -134,7 +133,7 @@ export const updateCharacter: Route<{
 		const isUpdated = Boolean(data);
 
 		if (!isUpdated) {
-			return reply.status(404).send({ success: isUpdated, error: 'ok' });
+			return reply.status(404).send({ success: isUpdated, error: 'character not found' });
 		}
 
 		return reply.status(200).send({ success: isUpdated });

@@ -1,16 +1,15 @@
 import { FastifyInstance } from 'fastify';
-import { characterManager } from '../managers';
-import console from 'console';
+import { characterManager } from '../../managers';
+import { CREATE_CHARACTERS_QUEUE_RABBITMQ } from '../constants';
 
 export async function registerCharacterQueue(app: FastifyInstance) {
 	try {
-		const queue = 'hello';
 		const channel = app.amqp.channel;
-		await channel.assertQueue(queue, {
+		await channel.assertQueue(CREATE_CHARACTERS_QUEUE_RABBITMQ, {
 			durable: true,
 		});
 
-		channel.consume(queue, async (msg: any) => {
+		channel.consume(CREATE_CHARACTERS_QUEUE_RABBITMQ, async (msg: any) => {
 			if (msg !== null) {
 				await characterManager.processMessage({ app, message: msg.content.toString() });
 

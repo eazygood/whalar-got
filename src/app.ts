@@ -10,7 +10,7 @@ import registerPublicRoutes from './routes';
 import { swaggerConfig } from './config/swagger-config';
 import { mysqlConfig, registerMysqlDatabase } from './connectors/mysql-connector';
 import { rabbitmqConfig } from './connectors/rabbitmq-connector';
-import { registerCharacterQueue } from './message-queues/characters-queue';
+import { registerCharacterQueue } from './message-queues/consumers/characters-queue';
 
 export default async function main() {
 	const app = fastify();

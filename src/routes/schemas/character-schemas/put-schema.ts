@@ -10,12 +10,12 @@ export const UpdateOneCharactersParam = Type.Object({
 export type UpdateOneCharactersBody = Static<typeof UpdateOneCharactersBody>;
 export const UpdateOneCharactersBody = TypeObject({
 	name: Type.String(),
-	nickname: Nullable(Type.String()),
-	royal: Type.Boolean(),
-	kingsguard: Type.Boolean(),
-	link: Nullable(Type.String()),
-	image_full: Nullable(Type.String()),
-	image_thumb: Nullable(Type.String()),
+	nickname: Type.Optional(Nullable(Type.String())),
+	royal: Type.Optional(Type.Boolean()),
+	kingsguard: Type.Optional(Type.Boolean()),
+	link: Type.Optional(Nullable(Type.String())),
+	image_full: Type.Optional(Nullable(Type.String())),
+	image_thumb: Type.Optional(Nullable(Type.String())),
 });
 
 export type UpdateOneCharactersReply = Static<typeof UpdateOneCharactersReply>;
