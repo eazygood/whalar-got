@@ -8,7 +8,6 @@
   <li>
     <a href="#about-the-project">About The Project</a>
     <ul>
-      <li><a href="#system-architecture">System Architecture</a></li>
       <li><a href="#database-design">Database Design</a></li>
       <li><a href="#openapi-documentation">OpenAPI Documentation</a></li>
       <li><a href="#project-structure">Project Structure</a></li>
