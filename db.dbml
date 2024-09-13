@@ -53,16 +53,21 @@ Table relationships {
 
 
 Enum action_type {
-  "KILLED"
-  "SERVED"
-  "GUARDED"
-  "ABDUCTED"
+  "killed"
+	"killedBy"
+	"serves"
+	"servedBy"
+	"guardedBy"
+	"guardianOf"
+	"abducted"
+	"abductedBy"
 }
 
 Enum relationship_type {
-  "PARENT"
-  "SIBLING"
-  "MARRIED_ENGAGED"
+  "parent"
+	"parentOf"
+	"sibling"
+	"married_engaged"
 }
 
 Ref: characters.id < actors.character_id 
@@ -72,6 +77,5 @@ Ref: characters.id < relationships.characted_id
 Ref: relationships.relation_to > characters.id 
 Ref: characters.id < actions.character_id
 Ref: actions.action_to > characters.id
-
-Ref: actors.id < seasons_active.actor_id
+Ref: actors.id < seasons.actor_id
 
