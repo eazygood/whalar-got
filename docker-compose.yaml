@@ -56,25 +56,25 @@ services:
       timeout: 10s
       retries: 5
 
-  # rabbitmq:
-  #   container_name: whalar-got-rabbitmq
-  #   image: rabbitmq:3.8-management-alpine
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: rabbitmq
-  #     RABBITMQ_DEFAULT_PASS: rabbitmq
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq/
-  #     - rabbitmq_log:/var/log/rabbitmq
-  #   networks:
-  #     - backend-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
+  rabbitmq:
+    container_name: whalar-got-rabbitmq
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - backend-network
+    healthcheck:
+      test: ['CMD-SHELL', 'rabbitmq-diagnostics -q ping']
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 # temporary disable
 # elasticsearch:
@@ -97,10 +97,9 @@ services:
 #     retries: 5
 volumes:
   api:
-  # ignore:
   mysql_data:
-  # rabbitmq_data:
-  # rabbitmq_log:
+  rabbitmq_data:
+  rabbitmq_log:
   # elasticsearch_data:
 networks:
   backend-network:

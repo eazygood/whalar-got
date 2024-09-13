@@ -135,6 +135,6 @@ export async function deleteAll({
 		transaction,
 		callback: async (conn) => {
 			await conn.table(CHARACTERS_TABLE).del();
-		}
+		},
 	});
 }

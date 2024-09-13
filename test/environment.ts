@@ -25,7 +25,7 @@ export async function startMysqlDbContainer() {
 	}
 	const network = await new Network().start();
 
-	mysqlContainer =  await initMysqlContainer({
+	mysqlContainer = await initMysqlContainer({
 		network,
 		database: `testdb_${Math.random().toString(36).substring(2, 15)}`,
 		username: 'testor',
@@ -39,8 +39,7 @@ export async function startMysqlDbContainer() {
 export async function stopMysqlDbContainer(container?: StartedMySqlContainer) {
 	await container?.stop();
 	// setTimeout(async () => {
-		
+
 	// 	mysqlContainer = null;
 	// }, 5000);
 }
-

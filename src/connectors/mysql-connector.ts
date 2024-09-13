@@ -29,11 +29,13 @@ export async function registerMysqlDatabase(app: FastifyInstance): Promise<void>
 		directory: path.join(__dirname, '../db/migrations'),
 	});
 
-	// if (process.env.TEST_ENV) {
-		await app.knex.seed.run({
-			directory: path.join(__dirname, '../db/seeds'),
-		});
-	// }
+	if (process.env.TEST_ENV) {
+		return;
+	}
+	
+	await app.knex.seed.run({
+		directory: path.join(__dirname, '../db/seeds'),
+	});
 }
 
 export async function buildAndRun<T>({

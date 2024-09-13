@@ -13,7 +13,6 @@ import { CreateOneCharactersBody } from '../../../../../src/routes/schemas/chara
 let mysqlContainer: StartedMySqlContainer;
 let app: FastifyInstance;
 
-
 describe('GET /characters/:character_id', () => {
 	beforeAll(async () => {
 		const mockCharacterArray: CreateOneCharactersBody[] = [
@@ -29,12 +28,12 @@ describe('GET /characters/:character_id', () => {
 		];
 		mysqlContainer = await startMysqlDbContainer();
 		app = await startTestEnv();
-	
+
 		for (const character of mockCharacterArray) {
 			characterManager.createOne({ app, createData: character });
 		}
 	});
-	
+
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
 		await stopTestEnv(app);

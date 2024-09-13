@@ -11,7 +11,7 @@ export const createCharacterHouse: Route<{
 		response: {
 			200: characterHouseSchemas.CreateOneCharacterHouseReply,
 		},
-		description: 'Add character\'s house',
+		description: "Add character's house",
 		tags: ['house'],
 	},
 	async handler(request, reply) {
@@ -29,7 +29,7 @@ export const deleteCharacterHouse: Route<{
 		response: {
 			200: characterHouseSchemas.DeleteOneCharacterHouseReply,
 		},
-		description: 'Delete character\'s house',
+		description: "Delete character's house",
 		tags: ['house'],
 	},
 	async handler(request, reply) {

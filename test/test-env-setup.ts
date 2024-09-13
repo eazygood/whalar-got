@@ -10,9 +10,6 @@ export default async function setupTestEnvironment(_globalConfig: any, _projectC
 	// 	password: 'testor',
 	// 	port: 3306,
 	// });
-
-	
-
 	// (globalThis as any).TEST_MYSQL_CONTAINER = mysqlContainer;
-    // (globalThis as any).TEST_NETWORK = network
+	// (globalThis as any).TEST_NETWORK = network
 }

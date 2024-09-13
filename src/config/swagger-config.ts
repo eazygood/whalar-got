@@ -7,7 +7,7 @@ export const swaggerConfig = {
 			version: '0.0.1',
 		},
 		consumes: ['application/json'],
-    	produces: ['application/json'],
+		produces: ['application/json'],
 		externalDocs: {
 			url: 'https://swagger.io',
 			description: 'Find more info here',
@@ -15,7 +15,7 @@ export const swaggerConfig = {
 		tags: [
 			{ name: 'character', description: 'GoT characters related endpoints' },
 			{ name: 'actor', description: 'GoT actors related endpoints' },
-			{ name: 'house', description: 'GoT house related endpoints' }
-		  ],
+			{ name: 'house', description: 'GoT house related endpoints' },
+		],
 	},
 };

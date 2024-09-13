@@ -14,7 +14,7 @@ export const createCharacterActor: Route<{
 		response: {
 			200: characterActorSchemas.CreateOneCharacterActorReply,
 		},
-		description: 'Add character\'s actor',
+		description: "Add character's actor",
 		tags: ['actor'],
 	},
 	async handler(request, reply) {
@@ -44,7 +44,7 @@ export const getCharacterActor: Route<{
 		response: {
 			200: characterActorSchemas.FindOneCharactersActorReply,
 		},
-		description: 'Get character\'s actor',
+		description: "Get character's actor",
 		tags: ['actor'],
 	},
 	async handler(request, reply) {
@@ -69,7 +69,7 @@ export const deleteCharacterActor: Route<{
 		response: {
 			200: characterActorSchemas.DeleteOneCharacterActorReply,
 		},
-		description: 'Delete character\'s actor',
+		description: "Delete character's actor",
 		tags: ['actor'],
 	},
 	async handler(request, reply) {

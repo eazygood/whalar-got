@@ -38,6 +38,4 @@ describe('POST /characters/:character_id', () => {
 		await stopMysqlDbContainer(mysqlContainer);
 		await stopTestEnv(app);
 	});
-
-    
 });

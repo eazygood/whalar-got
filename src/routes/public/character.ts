@@ -28,18 +28,26 @@ export const createCharacter: Route<{
 			return reply.status(400).send({ data: null, success: false, error: ajv.errorsText() });
 		}
 
-		const created = await withinTransaction({
-			app: request.server,
-			callback: async (transaction) => {
-				return characterManager.createOne({
-					app: request.server,
-					createData: request.body,
-					transaction,
-				});
-			},
+		// const created = await withinTransaction({
+		// 	app: request.server,
+		// 	callback: async (transaction) => {
+		// 		return characterManager.createOne({
+		// 			app: request.server,
+		// 			createData: request.body,
+		// 			transaction,
+		// 		});
+		// 	},
+		// });
+
+		const queue = 'hello';
+		const channel = request.server.amqp.channel;
+		await channel.assertQueue(queue, {
+			durable: true,
 		});
 
-		return reply.status(200).send({ data: created, success: true });
+		channel.sendToQueue(queue, Buffer.from(JSON.stringify(request.body)));
+
+		return reply.status(200).send({ data: null, success: true });
 	},
 };
 

@@ -27,7 +27,7 @@ export async function initMysqlContainer({
 		.withExposedPorts(port)
 		.withNetwork(network)
 		.start();
-	
+
 	process.env['TEST_MYSQL_CONNETION_URI'] = mysqlContainer.getConnectionUri();
 	process.env['MYSQL_DATABASE'] = database;
 

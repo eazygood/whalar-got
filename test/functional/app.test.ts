@@ -1,4 +1,3 @@
-
 import { FastifyInstance } from 'fastify/types/instance';
 import { startTestEnv, stopTestEnv } from '../environment';
 import fp from 'fastify-plugin';
@@ -19,11 +18,11 @@ export function getDefaultKnexPluginParams() {
 }
 
 const knexPlugin = fp(async (fastify: any, options: any) => {
-  fastify.decorate("knex", knexMock);
+	fastify.decorate('knex', knexMock);
 });
 
-jest.mock("../../src/plugins/knex-plugin", () => {
-  return knexPlugin;
+jest.mock('../../src/plugins/knex-plugin', () => {
+	return knexPlugin;
 });
 
 let app: FastifyInstance;

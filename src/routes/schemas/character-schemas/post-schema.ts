@@ -19,5 +19,5 @@ export const CreateOneCharactersReply = Type.Intersect([
 	TypeObject({
 		data: Nullable(CharacterSchema),
 	}),
-	GeneralResponse
+	GeneralResponse,
 ]);

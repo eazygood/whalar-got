@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import Ajv from 'ajv';
 import _ from 'lodash';
 import * as characterRepository from '../repositories/character-repository';
 // import { characterSchemas } from '../routes/schemas';
@@ -17,6 +18,10 @@ import {
 	AlliesExtended,
 	RelationshipsExtended,
 } from '../mediators/character-details-mediator';
+import { CreateOneCharactersEventPayload } from '../entities/event';
+import { withinTransaction } from '../connectors/mysql-connector';
+
+const ajv = new Ajv();
 
 export async function findOne({
 	app,
@@ -230,4 +235,33 @@ function transformUpdateOneCharacter({
 		id: characterId,
 		...data,
 	};
+}
+
+export async function processMessage({ app, message }: { app: FastifyInstance; message: string }) {
+	try {
+		const messageObject: CreateOneCharactersEventPayload = JSON.parse(message);
+		const validated = ajv.validate(CreateOneCharactersEventPayload, messageObject);
+		console.log('REcevied', typeof message, validated, ajv.errorsText());
+
+		if (!validated) {
+			throw new Error('Character: process message failed', {
+				cause: ajv.errorsText(),
+			});
+		}
+
+		await withinTransaction({
+			app,
+			callback: async (transaction) => {
+				return characterRepository.createOne({
+					app,
+					data: messageObject,
+					transaction,
+				});
+			},
+		});
+	} catch (err) {
+		app.log.error(err);
+
+		throw err;
+	}
 }
