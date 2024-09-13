@@ -5,7 +5,7 @@ services:
     container_name: whalar-got-backend
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ${DOCKERFILE}
     restart: always
     environment:
       MYSQL_HOST: mysql
