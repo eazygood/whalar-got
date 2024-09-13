@@ -11,11 +11,6 @@ import {
 } from '../../../entities';
 import { GeneralResponse } from '../general-schema';
 
-export type FindManyCharactersReply = Static<typeof FindManyCharactersReply>;
-export const FindManyCharactersReply = TypeObject({
-	data: Type.Array(CharacterSchema),
-});
-
 export type SearchCharactersQuerystring = Static<typeof SearchCharactersQuerystring>;
 export const SearchCharactersQuerystring = Type.Object({
 	character_ids: Type.Optional(Type.Array(Type.Number())),

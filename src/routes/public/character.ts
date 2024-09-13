@@ -8,7 +8,6 @@ import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
 import { CREATE_CHARACTERS_QUEUE_RABBITMQ } from '../../message-queues/constants';
 import { eventManager } from '../../managers';
-import { GeneralResponse } from '../schemas/general-schema';
 import { parseBoolean } from '../../tools/querystring';
 
 const ajv = new Ajv();

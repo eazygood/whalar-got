@@ -33,7 +33,6 @@ describe('GET /characters/:character_id', () => {
 			},
 		];
 		mysqlContainer = await startMysqlDbContainer();
-		// rabbitmqContainer = await startRabbitMqContainer();
 		app = await startTestEnv();
 
 		for (const character of mockCharacterArray) {
@@ -43,7 +42,6 @@ describe('GET /characters/:character_id', () => {
 
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
-		// await stopRabbitMqContainer(rabbitmqContainer);
 		await stopTestEnv(app);
 	});
 	it('should get response status 200', async () => {

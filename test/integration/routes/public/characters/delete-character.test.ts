@@ -1,10 +1,8 @@
 import { StartedMySqlContainer } from '@testcontainers/mysql';
 import {
 	startMysqlDbContainer,
-	startRabbitMqContainer,
 	startTestEnv,
 	stopMysqlDbContainer,
-	stopRabbitMqContainer,
 	stopTestEnv,
 } from '../../../../environment';
 import request from 'supertest';
@@ -14,7 +12,6 @@ import { CreateOneCharactersBody } from '../../../../../src/routes/schemas/chara
 import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 
 let mysqlContainer: StartedMySqlContainer;
-let rabbitmqContainer: StartedRabbitMQContainer;
 let app: FastifyInstance;
 
 jest.setTimeout(100000);
@@ -32,7 +29,6 @@ describe('DELETE /characters/:character_id', () => {
 			},
 		];
 		mysqlContainer = await startMysqlDbContainer();
-		// rabbitmqContainer = await startRabbitMqContainer();
 		app = await startTestEnv();
 
 		for (const character of mockCharacterArray) {
@@ -42,7 +38,6 @@ describe('DELETE /characters/:character_id', () => {
 
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
-		// await stopRabbitMqContainer(rabbitmqContainer);
 		await stopTestEnv(app);
 	});
 

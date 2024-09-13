@@ -11,7 +11,6 @@ import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 import * as mysqlSeeder from '../../../../../src/db/seeds/01_characters';
 
 let mysqlContainer: StartedMySqlContainer;
-let rabbitmqContainer: StartedRabbitMQContainer;
 let app: FastifyInstance;
 
 describe('POST /characters/:character_id', () => {
@@ -25,7 +24,6 @@ describe('POST /characters/:character_id', () => {
 
 	afterAll(async () => {
 		await stopMysqlDbContainer(mysqlContainer);
-		// await stopRabbitMqContainer(rabbitmqContainer);
 		await stopTestEnv(app);
 	});
 
