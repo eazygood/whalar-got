@@ -7,10 +7,9 @@ import swaggerUi from '@fastify/swagger-ui';
 import knexPlugin from './plugins/knex-plugin';
 import registerPublicRoutes from './routes';
 
-import { swaggerConfig } from './config/swagger-config';
 import { mysqlConfig, registerMysqlDatabase } from './connectors/mysql-connector';
-import { rabbitmqConfig } from './connectors/rabbitmq-connector';
 import { registerCharacterQueue } from './message-queues/consumers/characters-queue';
+import { rabbitmqConfig, swaggerConfig } from './config';
 
 export default async function main() {
 	const app = fastify();
