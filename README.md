@@ -54,7 +54,7 @@ OpenAPI documentation once applications is running: [link](http://localhost:5500
 - [x] Added integration tests [here](/test/integration/routes/public/characters/)
 - [x] Coverage is applied once run `npm run test:cov` and can be found under coverage folder 
 - [x] ESlint used for linting
-- [x] Prittier used for fomating code
+- [x] Prettier used for fomating code
 - [x] Custom scripts [here](scripts) is written for creating seeds from [got-characters.json](scripts/got-characters.json). KnexJS library used for uploading data
 
 ### Not applied
