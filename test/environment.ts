@@ -17,7 +17,6 @@ export async function startTestEnv(): Promise<FastifyInstance> {
 }
 
 export async function stopTestEnv(app: FastifyInstance): Promise<void> {
-	// await app?.knex?.destroy()
 	await app?.close();
 }
 

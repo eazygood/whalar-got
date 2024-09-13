@@ -1,7 +1,3 @@
-.PHONY: all
-all: build
-
-
 DOCKERFILE := Dockerfile
 
 # Define targets

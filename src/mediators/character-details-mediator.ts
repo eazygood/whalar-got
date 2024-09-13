@@ -365,24 +365,6 @@ async function getAllies({
 			})
 		: [];
 
-	const alliesMap = _.keyBy(allies, 'ally_to');
-
-	const alliesExtended = allyCharacters.reduce(
-		(extended, relation) => {
-			const matchingData = alliesMap[relation.id];
-
-			if (matchingData && !extended[matchingData.id]) {
-				extended[matchingData.id] = {
-					character_ids: matchingData.character_id,
-					name: relation.name,
-				};
-			}
-
-			return extended;
-		},
-		{} as Record<number, any>,
-	);
-
 	const characterMap = _.keyBy(allyCharacters, 'id');
 	const aggregated = allies
 		.filter((ally) => ally.ally_to !== null)
