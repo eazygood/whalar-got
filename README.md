@@ -21,15 +21,12 @@
       <li><a href="#installation">Installation</a></li>
     </ul>
   </li>
-  <li><a href="#contact">Contact</a></li>
 </ol>
 
 
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-### System Architecture
 
 ### Database Design
 
@@ -58,7 +55,7 @@ OpenAPI documentation once applications is running: [link](http://localhost:5500
 - [x] Coverage is applied once run `npm run test:cov` and can be found under coverage folder 
 - [x] ESlint used for linting
 - [x] Prittier used for fomating code
-- [x] Custom scripts [here](scripts) is written for creating seeds from [got-characters.json](scripts/got-characters.json). KnexJS library used for uploading tests
+- [x] Custom scripts [here](scripts) is written for creating seeds from [got-characters.json](scripts/got-characters.json). KnexJS library used for uploading data
 
 ### Not applied
 - [ ] Elastic search
@@ -67,10 +64,10 @@ OpenAPI documentation once applications is running: [link](http://localhost:5500
 
 <!-- GETTING STARTED -->
 ## Getting Started
-To set up the project locally, you have to follow these instructions.
+To set up the project locally, you have to follow installation instructionss
 
 ### Installation
-You just need to clone the project using following command:
+Clone the project using following command:
 ```sh
 git clone https://github.com/eazygood/whalar-got.git
 ```
