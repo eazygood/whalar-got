@@ -72,18 +72,8 @@ Clone the project using following command:
 git clone https://github.com/eazygood/whalar-got.git
 ```
 
-### Run on Docker
-
-Follow these steps to run the project on docker:
-
-1. Move to project directory and run make build
-   ```sh
-   cd got-web-app
-   ```
-
-
-
 ### Run on Locally
+
 Follow these steps to run the project locally:
 1. Move to project directory
    ```sh
