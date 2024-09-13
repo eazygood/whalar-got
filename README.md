@@ -47,7 +47,7 @@ OpenAPI documentation once applications is running: [link](http://localhost:5500
 ### Tools and Technologies
 - [x] Typescript, Fastify, Typebox
 - [x] RESTful APIS. [here](/src/routes/public/character.ts)
-- [x] OpenAPI documentation. Url is http://localhost:8080/docs
+- [x] OpenAPI documentation. Url is http://localhost:5500/docs
 - [x] RabbitMq is connected and working. Implementation is [here](/src/message-queues/consumers/) and [here](/src/managers/event-manager.ts) 
 - [x] [Dockerfile.prod](Dockerfile.prod) and [Dockerfile.dev](Dockerfile.dev) and [docker-compose.yml](docker-compose.yaml) is created
 - [x] Added unit tests [here](/test/unit/routes/character.test.ts)
