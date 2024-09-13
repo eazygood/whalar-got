@@ -17,7 +17,7 @@ let mysqlContainer: StartedMySqlContainer;
 let rabbitmqContainer: StartedRabbitMQContainer;
 let app: FastifyInstance;
 
-jest.setTimeout(100000)
+jest.setTimeout(100000);
 describe('POST /characters/', () => {
 	beforeAll(async () => {
 		const mockCharacterArray: CreateOneCharactersBody[] = [

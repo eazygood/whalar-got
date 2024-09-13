@@ -11,5 +11,5 @@ export type Ally = Static<typeof Ally>;
 
 export type AllyMapped = Static<typeof AllyMapped>;
 export const AllyMapped = Type.Object({
-	allies: Type.Optional(Type.Array(Type.String()))
+	allies: Type.Optional(Type.Array(Type.String())),
 });

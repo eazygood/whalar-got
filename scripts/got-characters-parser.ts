@@ -425,14 +425,14 @@ function prepareDbStatements(data: Characters[]) {
 		prepareDbData(data);
 
 	const paths = [
-		{'./seeds/characters.json': characters, },
-		{'./seeds/relationships.json': relationships, },
-		{'./seeds/actions.json': actions, },
-		{'./seeds/allies.json': allies, },
-		{'./seeds/actors.json': actors, },
-		{'./seeds/seasons.json': seasons, },
-		{'./seeds/houses.json': houses, },
-	]
+		{ './seeds/characters.json': characters },
+		{ './seeds/relationships.json': relationships },
+		{ './seeds/actions.json': actions },
+		{ './seeds/allies.json': allies },
+		{ './seeds/actors.json': actors },
+		{ './seeds/seasons.json': seasons },
+		{ './seeds/houses.json': houses },
+	];
 
 	for (const p of paths) {
 		const [filePath, data] = Object.entries(p)[0];

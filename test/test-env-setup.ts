@@ -12,8 +12,8 @@ export default async function setupTestEnvironment(_globalConfig: any, _projectC
 	// 	port: 3306,
 	// });
 
-	const rabbitmqContainer = await initRabbitMqContainer()
+	const rabbitmqContainer = await initRabbitMqContainer();
 	// (globalThis as any).TEST_MYSQL_CONTAINER = mysqlContainer;
-	;(globalThis as any).TEST_RABBITMQ_CONTAINER = rabbitmqContainer;
+	(globalThis as any).TEST_RABBITMQ_CONTAINER = rabbitmqContainer;
 	// (globalThis as any).TEST_NETWORK = network
 }

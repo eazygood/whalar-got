@@ -206,14 +206,14 @@ export const searchCharacter: Route<{
 	schema: {
 		response: {
 			200: characterSearchSchemas.GeneralSearchCharactersReply,
-			400: characterSearchSchemas.GeneralSearchCharactersReply
+			400: characterSearchSchemas.GeneralSearchCharactersReply,
 		},
 		description: 'Search character by ID',
 		tags: ['character'],
 	},
 	async handler(request, reply) {
 		const { searchForRelatedItems } = request.query;
-		
+
 		if (typeof searchForRelatedItems === 'string') {
 			request.query.searchForRelatedItems = parseBoolean(searchForRelatedItems);
 		}

@@ -32,7 +32,7 @@ export async function registerMysqlDatabase(app: FastifyInstance): Promise<void>
 	if (process.env.TEST_ENV) {
 		return;
 	}
-	
+
 	await app.knex.seed.run({
 		directory: path.join(__dirname, '../db/seeds'),
 	});

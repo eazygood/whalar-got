@@ -46,5 +46,4 @@ export const rabbitmqMock = {
 export const mysqlConnectorMock = {
 	registerMysqlDatabase: jest.fn().mockResolvedValue({}),
 	withinTransaction,
-}
-
+};

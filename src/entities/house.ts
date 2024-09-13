@@ -8,9 +8,7 @@ export const House = Type.Object({
 });
 export type House = Static<typeof House>;
 
-
 export type HouseMapped = Static<typeof HouseMapped>;
 export const HouseMapped = Type.Object({
-	houseName: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())]))
+	houseName: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
 });
-

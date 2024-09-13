@@ -1,6 +1,14 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from 'fastify';
 
-export async function produceEventToRabbitMq<T>({ app, queue, body}: {app: FastifyInstance; queue: string; body: T }) {
+export async function produceEventToRabbitMq<T>({
+	app,
+	queue,
+	body,
+}: {
+	app: FastifyInstance;
+	queue: string;
+	body: T;
+}) {
 	try {
 		const channel = app.amqp.channel;
 		await channel.assertQueue(queue, {

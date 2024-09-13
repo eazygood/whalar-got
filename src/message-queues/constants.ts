@@ -1,1 +1,1 @@
-export const CREATE_CHARACTERS_QUEUE_RABBITMQ = 'create-character-queue'
+export const CREATE_CHARACTERS_QUEUE_RABBITMQ = 'create-character-queue';

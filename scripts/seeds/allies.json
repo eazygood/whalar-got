@@ -1,1 +1,10 @@
-[{"id":1,"character_id":60,"ally_to":106},{"id":2,"character_id":60,"ally_to":288},{"id":3,"character_id":106,"ally_to":60},{"id":4,"character_id":123,"ally_to":288},{"id":5,"character_id":288,"ally_to":123},{"id":6,"character_id":288,"ally_to":60},{"id":7,"character_id":288,"ally_to":351},{"id":8,"character_id":351,"ally_to":288}]
+[
+  { "id": 1, "character_id": 60, "ally_to": 106 },
+  { "id": 2, "character_id": 60, "ally_to": 288 },
+  { "id": 3, "character_id": 106, "ally_to": 60 },
+  { "id": 4, "character_id": 123, "ally_to": 288 },
+  { "id": 5, "character_id": 288, "ally_to": 123 },
+  { "id": 6, "character_id": 288, "ally_to": 60 },
+  { "id": 7, "character_id": 288, "ally_to": 351 },
+  { "id": 8, "character_id": 351, "ally_to": 288 }
+]

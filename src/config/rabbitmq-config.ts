@@ -4,7 +4,7 @@ export function rabbitmqConfig() {
 			url: process.env.TEST_RABBITMQ_CONNETION_URI,
 		};
 	}
-	
+
 	return {
 		hostname: process.env.RABBITMQ_HOST || 'localhost',
 		port: Number(process.env.RABBITMQ_PORT) || 5672,

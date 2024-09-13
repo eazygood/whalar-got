@@ -107,7 +107,7 @@ describe('POST /characters/:character_id', () => {
 		expect(response.body).toEqual({
 			success: false,
 			error: `data should have required property 'term'`,
-			data: null
+			data: null,
 		});
 	});
 });

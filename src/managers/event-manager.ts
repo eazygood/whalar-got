@@ -27,4 +27,3 @@ export async function publishOneUpdate({
 	// build entity domain and produce
 	await produceEventToRabbitMq<CreateOneCharactersEventPayload>({ app, queue, body });
 }
-

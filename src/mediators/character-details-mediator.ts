@@ -10,7 +10,12 @@ import {
 	seasonManager,
 } from '../managers';
 import { Knex } from 'knex';
-import { FieldTypes, SearchCharacters, SearchCharactersReply, SearchItemsQueryString } from '../routes/schemas/character-search-schemas';
+import {
+	FieldTypes,
+	SearchCharacters,
+	SearchCharactersReply,
+	SearchItemsQueryString,
+} from '../routes/schemas/character-search-schemas';
 import { Character, Actor, House, CharacterMapped } from '../entities';
 import { mapCharacters } from '../managers/character-manager';
 import { parseBoolean } from '../tools/querystring';
@@ -52,8 +57,8 @@ export async function findMany({
 	const entityTypesToUse = entityTypes.split(',');
 	const fieldsToUse = (fields ? fields.split(',') : characterRolesArray) as FieldTypes[];
 	const responseResult: SearchCharactersReply = {
-		characters: []
-	}
+		characters: [],
+	};
 
 	if (entityTypesToUse.includes('character') && searchForRelatedItems) {
 		const { characters, characterIds } = await getCharacters({

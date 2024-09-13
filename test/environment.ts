@@ -8,9 +8,9 @@ import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 let mysqlContainer: StartedMySqlContainer | null;
 
 export async function startTestEnv(): Promise<FastifyInstance> {
-	const main = require('../src/app').default
-	const app = await main()
-	
+	const main = require('../src/app').default;
+	const app = await main();
+
 	await app.ready();
 
 	return app;
@@ -54,12 +54,12 @@ export async function stopRabbitMqContainer(container?: StartedRabbitMQContainer
 export function getKnexPluginMock() {
 	return {
 		raw: jest.fn(),
-        destroy: jest.fn(),
-        migrate: {
-            latest: jest.fn(),
-        },
+		destroy: jest.fn(),
+		migrate: {
+			latest: jest.fn(),
+		},
 		table: {},
-	}
+	};
 }
 
 export function getRabbitmqMock() {
