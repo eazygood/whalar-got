@@ -1,4 +1,5 @@
 import fp from 'fastify-plugin';
+import { withinTransaction } from '../src/connectors/mysql-connector';
 
 const mockKnexInstance = {
 	select: jest.fn().mockReturnThis(),
@@ -22,7 +23,7 @@ export const knexPlugin = fp(async (fastify: any, options: any) => {
 	fastify.decorate('knex', mockKnexInstance);
 });
 
-export const characterRepostory = {
+export const characterRepostoryMock = {
 	findOne: jest.fn().mockReturnThis(),
 	findMany: jest.fn().mockReturnThis(),
 	createOne: jest.fn().mockReturnThis(),
@@ -32,7 +33,6 @@ export const characterRepostory = {
 
 export const rabbitmqMock = {
 	default: jest.fn().mockImplementation((instance, opts, next) => {
-		// Mock rabbitmq object on the fastify instance
 		instance.decorate('rabbitmq', {
 			createChannel: jest.fn().mockResolvedValue({
 				assertQueue: jest.fn().mockResolvedValue(true),
@@ -42,4 +42,9 @@ export const rabbitmqMock = {
 		next();
 	}),
 };
+
+export const mysqlConnectorMock = {
+	registerMysqlDatabase: jest.fn().mockResolvedValue({}),
+	withinTransaction,
+}
 

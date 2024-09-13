@@ -5,7 +5,6 @@ import { initRabbitMqContainer } from './env-builds/rabbitmq';
 import { StartedMySqlContainer } from '@testcontainers/mysql';
 import { StartedRabbitMQContainer } from '@testcontainers/rabbitmq';
 
-let app: FastifyInstance;
 let mysqlContainer: StartedMySqlContainer | null;
 
 export async function startTestEnv(): Promise<FastifyInstance> {

@@ -8,6 +8,8 @@ import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
 import { CREATE_CHARACTERS_QUEUE_RABBITMQ } from '../../message-queues/constants';
 import { eventManager } from '../../managers';
+import { GeneralResponse } from '../schemas/general-schema';
+import { parseBoolean } from '../../tools/querystring';
 
 const ajv = new Ajv();
 
@@ -196,19 +198,30 @@ export const deleteCharacter: Route<{
 };
 
 export const searchCharacter: Route<{
-	Reply: characterSearchSchemas.SearchCharactersReply;
+	Reply: characterSearchSchemas.GeneralSearchCharactersReply;
 	Querystring: characterSearchSchemas.SearchItemsQueryString;
 }> = {
 	method: 'GET',
 	url: '/search',
 	schema: {
 		response: {
-			200: characterSearchSchemas.SearchCharactersReply,
+			200: characterSearchSchemas.GeneralSearchCharactersReply,
+			400: characterSearchSchemas.GeneralSearchCharactersReply
 		},
 		description: 'Search character by ID',
 		tags: ['character'],
 	},
 	async handler(request, reply) {
+		const { searchForRelatedItems } = request.query;
+		
+		if (typeof searchForRelatedItems === 'string') {
+			request.query.searchForRelatedItems = parseBoolean(searchForRelatedItems);
+		}
+
+		if (!ajv.validate(characterSearchSchemas.SearchItemsQueryString, request.query)) {
+			return reply.status(400).send({ data: null, success: false, error: ajv.errorsText() });
+		}
+
 		const data = await withinTransaction({
 			app: request.server,
 			callback: async (transaction) => {
@@ -220,6 +233,6 @@ export const searchCharacter: Route<{
 			},
 		});
 
-		return reply.status(200).send(data);
+		return reply.status(200).send({ data, success: true });
 	},
 };

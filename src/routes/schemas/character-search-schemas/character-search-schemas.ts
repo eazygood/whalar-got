@@ -9,6 +9,7 @@ import {
 	HouseMapped,
 	RelationshipMapped,
 } from '../../../entities';
+import { GeneralResponse } from '../general-schema';
 
 export type FindManyCharactersReply = Static<typeof FindManyCharactersReply>;
 export const FindManyCharactersReply = TypeObject({
@@ -84,19 +85,8 @@ export const SearchItemsQueryString = Type.Object({
 	term: Type.String(),
 	entityTypes: Type.String(Type.Enum(EntityTypes)),
 	searchForRelatedItems: Type.Boolean({ default: false }),
-	fields: Type.String(Type.Enum(FieldTypes)),
+	fields: Type.Optional(Type.String(Type.Enum(FieldTypes))),
 });
-
-export type SearchQuerystring = Static<typeof SearchQuerystring>;
-export const SearchQuerystring = Type.Intersect([
-	SearchCharactersQuerystring,
-	SearchActorQuerystring,
-	SearchHouseQuerystring,
-	SearchAllyQuerystring,
-	SearchRelationshipsQuerystring,
-	// SearchActionsQuerystring,
-	SearchItemsQueryString,
-]);
 
 export type SearchCharacters = Static<typeof SearchCharacters>;
 export const SearchCharacters = Type.Intersect([
@@ -113,3 +103,11 @@ export type SearchCharactersReply = Static<typeof SearchCharactersReply>;
 export const SearchCharactersReply = TypeObject({
 	characters: Type.Array(SearchCharacters),
 });
+
+export type GeneralSearchCharactersReply = Static<typeof GeneralSearchCharactersReply>;
+export const GeneralSearchCharactersReply = Type.Intersect([
+	TypeObject({
+		data: Nullable(SearchCharactersReply),
+	}),
+	GeneralResponse,
+]);

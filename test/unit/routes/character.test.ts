@@ -1,19 +1,18 @@
-import { getKnexPluginMock, startTestEnv, stopTestEnv } from '../../environment';
+import { startTestEnv, stopTestEnv } from '../../environment';
 import { FastifyInstance } from 'fastify';
 
-import { characterRepostory, knexPlugin, rabbitmqMock } from '../../mocks';
+import { characterRepostoryMock, knexPlugin, mysqlConnectorMock, rabbitmqMock } from '../../mocks';
 
 let app: FastifyInstance;
 
-jest.mock('../../../src/plugins/knex-plugin', () => {
-	return knexPlugin;
-});
-
-jest.mock('../../../src/repositories/character-repository', () => characterRepostory);
-
-jest.mock('fastify-amqp', () => rabbitmqMock);
-
 beforeAll(async () => {
+	jest.mock('../../../src/plugins/knex-plugin', () => {
+		return knexPlugin;
+	});
+	jest.mock('../../../src/repositories/character-repository', () => characterRepostoryMock);
+	jest.mock('../../../src/connectors/mysql-connector', () => mysqlConnectorMock);
+	jest.mock('fastify-amqp', () => rabbitmqMock);
+
 	app = await startTestEnv();
 });
 
@@ -39,7 +38,7 @@ describe('endpoints /characters/ calls', () => {
 				image_thumb: null,
 			};
 
-			characterRepostory.findOne = jest.fn().mockReturnValue(createResponseData) as any;
+			characterRepostoryMock.findOne = jest.fn().mockReturnValue(createResponseData) as any;
 
 			const character = await app.inject({
 				method: 'GET',
@@ -54,7 +53,7 @@ describe('endpoints /characters/ calls', () => {
 		});
 
 		it('should respond with 404 if character is not found', async () => {
-			characterRepostory.findOne = jest.fn().mockReturnValue(null) as any;
+			characterRepostoryMock.findOne = jest.fn().mockReturnValue(null) as any;
 
 			const character = await app.inject({
 				method: 'GET',
@@ -69,7 +68,7 @@ describe('endpoints /characters/ calls', () => {
 		});
 
 		it('should respond with 500 if an error occurs', async () => {
-			characterRepostory.findOne = jest.fn().mockImplementation(() => {
+			characterRepostoryMock.findOne = jest.fn().mockImplementation(() => {
 				throw new Error('Internal Server Error');
 			}) as any;
 
@@ -99,10 +98,10 @@ describe('endpoints /characters/ calls', () => {
 				image_thumb: null,
 			};
 
-			characterRepostory.createOne = jest
+			characterRepostoryMock.createOne = jest
 				.fn()
 				.mockReturnValue({ id: 1, ...newCharacter }) as any;
-			characterRepostory.findOne = jest
+			characterRepostoryMock.findOne = jest
 				.fn()
 				.mockReturnValue({ id: 1, ...newCharacter }) as any;
 
@@ -153,7 +152,7 @@ describe('endpoints /characters/ calls', () => {
 				image_thumb: null,
 			};
 
-			characterRepostory.updateOne = jest.fn().mockReturnValue(updatedCharacter) as any;
+			characterRepostoryMock.updateOne = jest.fn().mockReturnValue(updatedCharacter) as any;
 
 			const response = await app.inject({
 				method: 'PUT',
@@ -168,7 +167,7 @@ describe('endpoints /characters/ calls', () => {
 		});
 
 		it('should respond with 404 if character is not found', async () => {
-			characterRepostory.updateOne = jest.fn().mockReturnValue(null) as any;
+			characterRepostoryMock.updateOne = jest.fn().mockReturnValue(null) as any;
 
 			const response = await app.inject({
 				method: 'PUT',
@@ -188,7 +187,7 @@ describe('endpoints /characters/ calls', () => {
 
 	describe('DELETE /characters/:id', () => {
 		it('should delete an existing character', async () => {
-			characterRepostory.deleteOne = jest.fn().mockReturnValue(true) as any;
+			characterRepostoryMock.deleteOne = jest.fn().mockReturnValue(true) as any;
 
 			const response = await app.inject({
 				method: 'DELETE',
@@ -202,7 +201,7 @@ describe('endpoints /characters/ calls', () => {
 		});
 
 		it('should respond with 404 if character is not found', async () => {
-			characterRepostory.deleteOne = jest.fn().mockReturnValue(null) as any;
+			characterRepostoryMock.deleteOne = jest.fn().mockReturnValue(null) as any;
 
 			const response = await app.inject({
 				method: 'DELETE',

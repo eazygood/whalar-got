@@ -2,8 +2,6 @@ import data from './got-characters.json';
 import fs from 'fs';
 import path from 'path';
 
-const DB_TABLE_NAME = 'game_of_thrones';
-
 type Characters = {
 	characterName: string;
 	characterImageThumb?: string;
@@ -426,13 +424,20 @@ function prepareDbStatements(data: Characters[]) {
 	const { characters, relationships, actions, allies, actors, seasons, houses } =
 		prepareDbData(data);
 
-	saveDataToFileAsJSON(characters, path.join(__dirname, './seeds/characters.json'));
-	saveDataToFileAsJSON(relationships, path.join(__dirname, './seeds/relationships.json'));
-	saveDataToFileAsJSON(actions, path.join(__dirname, './seeds/actions.json'));
-	saveDataToFileAsJSON(allies, path.join(__dirname, './seeds/allies.json'));
-	saveDataToFileAsJSON(actors, path.join(__dirname, './seeds/actors.json'));
-	saveDataToFileAsJSON(seasons, path.join(__dirname, './seeds/seasons.json'));
-	saveDataToFileAsJSON(houses, path.join(__dirname, './seeds/houses.json'));
+	const paths = [
+		{'./seeds/characters.json': characters, },
+		{'./seeds/relationships.json': relationships, },
+		{'./seeds/actions.json': actions, },
+		{'./seeds/allies.json': allies, },
+		{'./seeds/actors.json': actors, },
+		{'./seeds/seasons.json': seasons, },
+		{'./seeds/houses.json': houses, },
+	]
+
+	for (const p of paths) {
+		const [filePath, data] = Object.entries(p)[0];
+		saveDataToFileAsJSON(data, path.join(__dirname, filePath));
+	}
 }
 
 function saveDataToFileAsJSON(data: any, filePath: string) {
