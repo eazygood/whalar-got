@@ -46,7 +46,6 @@ describe('endpoints /characters/ calls', () => {
 				url: '/characters/1',
 			});
 
-			console.log(character.body);
 			expect(character.statusCode).toBe(200);
 			expect(JSON.parse(character.body)).toEqual({
 				data: createResponseData,
@@ -162,8 +161,6 @@ describe('endpoints /characters/ calls', () => {
 				payload: updatedCharacter,
 			});
 
-			console.log(response.body);
-
 			expect(response.statusCode).toBe(200);
 			expect(JSON.parse(response.body)).toEqual({
 				success: true,
@@ -181,7 +178,6 @@ describe('endpoints /characters/ calls', () => {
 				},
 			});
 
-			console.log(response.body);
 			expect(response.statusCode).toBe(404);
 			expect(JSON.parse(response.body)).toEqual({
 				success: false,

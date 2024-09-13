@@ -15,3 +15,15 @@ export const ActorToAdd = Type.Object({
 	name: Type.String(),
 	link: Nullable(Type.String()),
 });
+
+export type ActorMapped = Static<typeof ActorMapped>;
+export const ActorMapped = Type.Object({
+	actorName: Type.Optional(Type.String()),
+	actorLink: Type.Optional(Nullable(Type.String())),
+	seasonsActive: Type.Optional(Type.Array(Type.Number())),
+});
+
+export type ActorsMapped = Static<typeof ActorsMapped>;
+export const ActorsMapped = Type.Object({
+	actors: Type.Optional(Type.Array(ActorMapped)),
+});

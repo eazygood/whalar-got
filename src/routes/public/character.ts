@@ -6,8 +6,8 @@ import * as characterSchemas from '../schemas/character-schemas';
 import { withinTransaction } from '../../connectors/mysql-connector';
 import { characterSearchSchemas } from '../schemas';
 import { characterDetailsMediator } from '../../mediators';
-import { produceToRabbitMq } from '../../message-queues/producers/rabbitmq-producer';
 import { CREATE_CHARACTERS_QUEUE_RABBITMQ } from '../../message-queues/constants';
+import { eventManager } from '../../managers';
 
 const ajv = new Ajv();
 
@@ -42,9 +42,13 @@ export const createCharacter: Route<{
 		});
 
 		if (process.env.PRODUCE_TO_QUEUE) {
-			await  produceToRabbitMq({ app: request.server, queue: CREATE_CHARACTERS_QUEUE_RABBITMQ, body: request.body})
+			await eventManager.publishOneCreate({
+				app: request.server,
+				queue: CREATE_CHARACTERS_QUEUE_RABBITMQ,
+				body: request.body,
+			});
 		}
-		
+
 		return reply.status(200).send({ data: created, success: true });
 	},
 };
@@ -79,8 +83,6 @@ export const getCharacter: Route<{
 			app: request.server,
 			characterId: Number(request.params.character_id),
 		});
-
-		console.log(character);
 
 		if (!character) {
 			return reply.status(404).send({ data: null, success: false });
@@ -129,6 +131,14 @@ export const updateCharacter: Route<{
 				});
 			},
 		});
+
+		if (process.env.PRODUCE_TO_QUEUE) {
+			await eventManager.publishOneUpdate({
+				app: request.server,
+				queue: CREATE_CHARACTERS_QUEUE_RABBITMQ,
+				body: request.body,
+			});
+		}
 
 		const isUpdated = Boolean(data);
 
@@ -210,6 +220,6 @@ export const searchCharacter: Route<{
 			},
 		});
 
-		return reply.status(200).send({ data });
+		return reply.status(200).send(data);
 	},
 };

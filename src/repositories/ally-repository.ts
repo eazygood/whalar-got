@@ -20,8 +20,6 @@ export async function findMany({
 		app,
 		transaction,
 		callback: async (conn) => {
-			console.log('searchQuery: ', searchQuery);
-
 			if (_.isEmpty(searchQuery)) {
 				return conn.table(ALLIES_TABLE).select();
 			}

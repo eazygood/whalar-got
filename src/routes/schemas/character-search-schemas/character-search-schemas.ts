@@ -1,6 +1,14 @@
 import { Static, Type } from '@sinclair/typebox';
-import { CharacterSchema } from '../../../entities/character';
+import { CharacterMapped, CharacterSchema } from '../../../entities/character';
 import { TypeObject, Nullable } from '../../../tools/typebox';
+import {
+	ActionMapped,
+	ActorMapped,
+	ActorsMapped,
+	AllyMapped,
+	HouseMapped,
+	RelationshipMapped,
+} from '../../../entities';
 
 export type FindManyCharactersReply = Static<typeof FindManyCharactersReply>;
 export const FindManyCharactersReply = TypeObject({
@@ -90,7 +98,18 @@ export const SearchQuerystring = Type.Intersect([
 	SearchItemsQueryString,
 ]);
 
+export type SearchCharacters = Static<typeof SearchCharacters>;
+export const SearchCharacters = Type.Intersect([
+	CharacterMapped,
+	HouseMapped,
+	ActionMapped,
+	RelationshipMapped,
+	AllyMapped,
+	ActorMapped,
+	ActorsMapped,
+]);
+
 export type SearchCharactersReply = Static<typeof SearchCharactersReply>;
 export const SearchCharactersReply = TypeObject({
-	data: Type.Any(),
+	characters: Type.Array(SearchCharacters),
 });

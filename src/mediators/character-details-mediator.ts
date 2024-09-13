@@ -10,8 +10,8 @@ import {
 	seasonManager,
 } from '../managers';
 import { Knex } from 'knex';
-import { FieldTypes, SearchItemsQueryString } from '../routes/schemas/character-search-schemas';
-import { Character, Actor, House } from '../entities';
+import { FieldTypes, SearchCharacters, SearchCharactersReply, SearchItemsQueryString } from '../routes/schemas/character-search-schemas';
+import { Character, Actor, House, CharacterMapped } from '../entities';
 import { mapCharacters } from '../managers/character-manager';
 import { parseBoolean } from '../tools/querystring';
 
@@ -37,8 +37,6 @@ export async function findMany({
 }) {
 	let { term, entityTypes, fields, searchForRelatedItems } = searchQuery;
 
-	console.log('searchForRelatedItems ', typeof searchForRelatedItems);
-
 	if (!term) {
 		throw new Error('Search: term not defined');
 	}
@@ -53,7 +51,9 @@ export async function findMany({
 
 	const entityTypesToUse = entityTypes.split(',');
 	const fieldsToUse = (fields ? fields.split(',') : characterRolesArray) as FieldTypes[];
-	const responseResult: any = { characters: [] };
+	const responseResult: SearchCharactersReply = {
+		characters: []
+	}
 
 	if (entityTypesToUse.includes('character') && searchForRelatedItems) {
 		const { characters, characterIds } = await getCharacters({
@@ -109,7 +109,7 @@ export async function findMany({
 			relationships,
 		});
 
-		responseResult.characters = mappedData;
+		responseResult.characters = mappedData as SearchCharacters[];
 	} else {
 		const { characters } = await getCharacters({
 			app,
@@ -118,7 +118,7 @@ export async function findMany({
 			transaction,
 		});
 
-		responseResult.characters = characters;
+		responseResult.characters = characterManager.transform({ characters });
 	}
 
 	// TODO: add logic for actor entity + related items
@@ -131,50 +131,6 @@ export async function findMany({
 
 	// ?term="looking for it",entityTypes=character,actor,house,ally,relationship,action,season,fields=name,nickname,actor_name,house_name,link
 	// term= string
-	// searchForRelatedItems=boolean(true)
-	// entityTypes=entities_string_comma_separated
-	// fields=default (all)
-	// find characters by name / nickname
-	// if searchForRelatedItems === true
-	// add relationships
-	// add actions
-	// add actors
-	// add seasons
-	// add allies
-	// add houses
-	// else
-	// only characters
-
-	// const characters = characterManager.findMany({ app, searchQuery });
-
-	//
-	// find actors by actor name
-	// if searchForRelatedItems === true
-	// find characters by id from actors
-	// find seasons by actor id
-	// find actions by characters id
-	// find relationship by characters id
-	// find allies by characters id
-	// find houses by characters id
-	// else
-	// only actors
-	// find houses by house name
-	// if searchForRelatedItems === true
-	// find characters by ids from houses
-	// find actions by characters id
-	// find relationship by characters id
-	// find allies by characters id
-	// find actors by characters id
-	// find seasons by actor id
-	// only houses
-	// find allies by ally name  with characters join
-	// if searchForRelatedItems === true
-	// find characters by ids from allies
-	// find actions by characters id
-	// find relationship by characters id
-	// find houses by characters id
-	// find actors by characters id
-	// find seasons by actor id
 
 	return responseResult;
 }
@@ -203,7 +159,7 @@ async function getCharacters({
 		throw new Error('Search: character fields not provided');
 	}
 
-	const characters = await characterManager.findMany({
+	const characters: Character[] = await characterManager.findMany({
 		app,
 		searchQuery: {
 			...fieldsToSearch,

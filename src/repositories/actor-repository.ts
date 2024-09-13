@@ -67,10 +67,6 @@ export async function findMany({
 		app,
 		transaction,
 		callback: async (conn) => {
-			console.log('searchQuery: ', searchQuery);
-
-			console.log(searchQuery);
-
 			if (_.isEmpty(searchQuery)) {
 				return conn.table(ACTORS_TABLE).select();
 			}

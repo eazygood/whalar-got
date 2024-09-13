@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import _ from 'lodash';
 import * as characterRepository from '../repositories/character-repository';
 // import { characterSchemas } from '../routes/schemas';
-import { Character } from '../entities/character';
+import { Character, CharacterMapped } from '../entities/character';
 import { Knex } from 'knex';
 import {
 	CreateOneCharactersBody,
@@ -20,6 +20,7 @@ import {
 } from '../mediators/character-details-mediator';
 import { CreateOneCharactersEventPayload } from '../entities/event';
 import { withinTransaction } from '../connectors/mysql-connector';
+import { RelationshipMapped } from '../entities';
 
 const ajv = new Ajv();
 
@@ -122,6 +123,16 @@ export async function search({
 	return await characterRepository.findMany({ app, searchQuery });
 }
 
+export function transform({ characters }: { characters: Character[] }): CharacterMapped[] {
+	return characters.map((character) => ({
+		characterName: character.name,
+		...(character.nickname ? { nickname: character.nickname } : null),
+		...(character.image_thumb ? { characterImageThumb: character.image_thumb } : null),
+		...(character.image_full ? { characterImageFull: character.image_full } : null),
+		...(character.link ? { characterLink: character.link } : null),
+	}));
+}
+
 export function mapCharacters({
 	characters,
 	actors,
@@ -198,11 +209,12 @@ function mapRelationShips({
 }: {
 	relationships: RelationshipsExtended[];
 	characterId: number;
-}) {
+}): RelationshipMapped {
 	return _.chain(relationships)
 		.filter({ character_id: characterId })
 		.groupBy('type')
 		.mapValues((items) => _.map(items, 'name'))
+		.mapKeys((value, key) => _.camelCase(key))
 		.value();
 }
 
@@ -213,7 +225,6 @@ function mapActions({ actions, characterId }: { actions: ActionsExtended[]; char
 		.mapValues((items) => _.map(items, 'name'))
 		.value();
 
-	console.log(actions, characterId, a);
 	return a;
 }
 function mapAllies({ allies, characterId }: { allies: AlliesExtended[]; characterId: number }) {
@@ -228,7 +239,6 @@ export async function processMessage({ app, message }: { app: FastifyInstance; m
 	try {
 		const messageObject: CreateOneCharactersEventPayload = JSON.parse(message);
 		const validated = ajv.validate(CreateOneCharactersEventPayload, messageObject);
-		console.log('REcevied', typeof message, validated, ajv.errorsText());
 
 		if (!validated) {
 			throw new Error('Character: process message failed', {

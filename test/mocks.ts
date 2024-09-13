@@ -15,11 +15,7 @@ const mockKnexInstance = {
 		latest: jest.fn().mockReturnThis(),
 	},
 	seed: jest.fn().mockReturnThis(),
-	then: jest.fn().mockImplementation((callback: (rows: any[]) => void) => {
-		console.log('Mock Knex: then called');
-		callback([{ id: 1, name: 'John Doe' }]);
-		return Promise.resolve();
-	}),
+	then: jest.fn().mockReturnThis(),
 };
 
 export const knexPlugin = fp(async (fastify: any, options: any) => {

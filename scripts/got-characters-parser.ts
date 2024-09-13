@@ -1,33 +1,5 @@
-// "characterName":"Lysa Arryn",
-// "characterImageThumb":"https://images-na.ssl-images-amazon.com/images/M/MV5BMmNlYTYzOTYtOTg1ZC00YzdlLTliNTgtZDhjMTY1MGViZTA5XkEyXkFqcGdeQXVyMjk3NTUyOTc@._V1._SX100_SY140_.jpg",
-// "characterImageFull":"https://images-na.ssl-images-amazon.com/images/M/MV5BMmNlYTYzOTYtOTg1ZC00YzdlLTliNTgtZDhjMTY1MGViZTA5XkEyXkFqcGdeQXVyMjk3NTUyOTc@._V1_.jpg",
-// "characterLink":"/character/ch0251736/",
-// "actorName":"Kate Dickie",
-// "actorLink":"/name/nm0225483/",
-// "houseName":[
-//    "Arryn",
-//    "Tully"
-// ],
-// "killed":[
-//    "Jon Arryn"
-// ],
-// "killedBy":[
-//    "Petyr Baelish"
-// ],
-// "marriedEngaged":[
-//    "Petyr Baelish"
-// ],
-// "parents":[
-//    "Hoster Tully"
-// ],
-// "siblings":[
-//    "Catelyn Tully",
-//    "Edmure Tully"
-// ]
-
 import data from './got-characters.json';
 import fs from 'fs';
-import { type } from 'os';
 import path from 'path';
 
 const DB_TABLE_NAME = 'game_of_thrones';
@@ -461,35 +433,6 @@ function prepareDbStatements(data: Characters[]) {
 	saveDataToFileAsJSON(actors, path.join(__dirname, './seeds/actors.json'));
 	saveDataToFileAsJSON(seasons, path.join(__dirname, './seeds/seasons.json'));
 	saveDataToFileAsJSON(houses, path.join(__dirname, './seeds/houses.json'));
-
-	// const getInsertCharcterStatement = (c: CharactersDb) => `INSERT INTO characters (id, name, nickname, royal, kingsguard, link, image_full, image_thumb) VALUES (${c.id}, '${c.name}', '${c.nickname}', ${c.royal}, ${c.kingsguard}, '${c.link}', '${c.image_full}', '${c.image_thumb}');`
-	// const getInsertRelationshipsStatement = (r: RelationshipsDb) => `INSERT INTO relationships (id, character_id, relation_to, type) VALUES (${r.id}, ${r.character_id}, ${r.relation_to}, '${r.type}');`
-	// const getInsertActionsStatement = (a: ActionsDb) => `INSERT INTO actions (id, character_id, action_to, type) VALUES (${a.id}, ${a.character_id}, ${a.action_to}, '${a.type}');`
-	// const getInsertAlliesStatement = (a: AlliesDb) => `INSERT INTO allies (id, character_id, ally_to) VALUES (${a.id}, ${a.character_id}, ${a.ally_to});`
-	// const getInsertActorsStatement = (a: ActorsDb) => `INSERT INTO actors (id, character_id, name, link) VALUES (${a.id}, ${a.character_id}, '${a.name}', '${a.link}');`
-	// const getInsertSeasonActiveStatement = (s: SeasonActiveDb) => `INSERT INTO seasons (id, actor_id, count) VALUES (${s.id}, ${s.actor_id}, ${s.count});`
-	// const getInsertHousesStatement = (h: HousesDb) => `INSERT INTO houses (id, character_id, name) VALUES (${h.id}, ${h.character_id}, '${h.name}');`
-
-	// const insertCharactersStatement = characters.map((c: CharactersDb) => getInsertCharcterStatement(c));
-	// const insertRelationshipsStatement = relationships.map((r: RelationshipsDb) => getInsertRelationshipsStatement(r));
-	// const insertActionsStatement = actions.map((a: ActionsDb) => getInsertActionsStatement(a));
-	// const insertAlliesStatement = allies.map((a: AlliesDb) => getInsertAlliesStatement(a));
-	// const insertActorsStatement = actors.map((a: ActorsDb) => getInsertActorsStatement(a));
-	// const insertSeasonActiveStatement = seasons.map((s: SeasonActiveDb) => getInsertSeasonActiveStatement(s));
-	// const insertHousesStatement = houses.map((h: HousesDb) => getInsertHousesStatement(h));
-
-	// saveDataToFile(insertCharactersStatement, path.join(__dirname, "./sql/characters.sql"));
-	// saveDataToFile(insertRelationshipsStatement, path.join(__dirname, "./sql/relationships.sql"));
-	// saveDataToFile(insertActionsStatement, path.join(__dirname, "./sql/actions.sql"));
-	// saveDataToFile(insertAlliesStatement, path.join(__dirname, "./sql/allies.sql"));
-	// saveDataToFile(insertActorsStatement, path.join(__dirname, "./sql/actors.sql"));
-	// saveDataToFile(insertSeasonActiveStatement, path.join(__dirname, "./sql/seasons.sql"));
-	// saveDataToFile(insertHousesStatement, path.join(__dirname, "./sql/houses.sql"));
-}
-
-function saveDataToFile(data: any, filePath: string) {
-	// const jsonData = JSON.stringify(data);
-	fs.writeFileSync(filePath, data.join('\n'));
 }
 
 function saveDataToFileAsJSON(data: any, filePath: string) {
@@ -497,6 +440,4 @@ function saveDataToFileAsJSON(data: any, filePath: string) {
 	fs.writeFileSync(filePath, jsonData);
 }
 
-// console.log(Object.entries(getCharacters(data.characters)).filter(c => c[1].length > 1));
-// saveDataToFile(prepareDbData(data.characters), path.join(__dirname, "./test.json"));
 prepareDbStatements(data.characters);
