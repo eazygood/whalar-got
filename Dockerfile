@@ -4,10 +4,10 @@ RUN apk add --no-cache bash
 
 WORKDIR /app
 
-COPY package*.json .
-COPY tsconfig.json ./
-COPY src ./src
-COPY scripts ./scripts
+COPY package*.json tsconfig.json src scripts ./
+# COPY tsconfig.json ./
+# COPY src ./src
+# COPY scripts ./scripts
 
 RUN npm install
 
